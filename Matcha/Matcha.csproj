@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageId>Matcha</PackageId>
+    <PackageId>MatchaLogger</PackageId>
     <Version>1.0.0</Version>
     <Authors>AestheticalZ</Authors>
     <Description>A simple but neat logging library for .NET 5.0.</Description>
@@ -11,10 +11,25 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>utility; logging; logger; log</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>git@github.com:AestheticalZ/Matcha.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/AestheticalZ/Matcha</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
+    <None Remove="LICENSE.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Pastel" Version="3.0.0" />
   </ItemGroup>
 
