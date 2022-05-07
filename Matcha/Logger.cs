@@ -40,7 +40,6 @@ namespace Matcha
 				if (Settings.OverwriteIfExists) TargetMode = FileMode.OpenOrCreate;
 
 				LogFileWriter = new StreamWriter(File.Open(TotalPath, TargetMode, FileAccess.Write, FileShare.ReadWrite));
-				LogFileWriter.WriteLine();
 			}
 
 			//If user requests no colorization, or the OS is Windows but it's older than Windows 10.
