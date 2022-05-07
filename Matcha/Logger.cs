@@ -1,0 +1,161 @@
+﻿using Pastel;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+
+namespace Matcha
+{
+	/// <summary>
+	/// The core class of Matcha. This is where you can tell it to log messages.
+	/// </summary>
+	public class MatchaLogger : IDisposable
+	{
+		/// <summary>
+		/// The instance of <see cref="MatchaLoggerSettings"/> passed to <see cref="MatchaLogger"/>'s constructor.
+		/// </summary>
+		public MatchaLoggerSettings LoggerSettings { get; set; }
+
+		private StreamWriter LogFileWriter;
+		private Regex AnsiRegex = new Regex("\\x1b([NOP\\\\X^_c]|(\\[[0-9;]*[A-HJKSTfimnsu])|(].+(\\x07|(\\x1b\\\\))))", RegexOptions.Compiled);
+
+		private object LogLock = new object();
+		private bool Disposed = false;
+
+		/// <summary>
+		/// The constructor for <see cref="MatchaLogger"/>.
+		/// </summary>
+		/// <param name="Settings">An instance of the <see cref="MatchaLoggerSettings"/> class.</param>
+		public MatchaLogger(MatchaLoggerSettings Settings)
+		{
+			if (Settings.LogToFile)
+			{
+				FileMode TargetMode = FileMode.Append;
+
+				string LogFilename = DateTime.Now.ToString(Settings.FilenameFormat) + ".txt";
+				string TotalPath = Path.Combine(Settings.LogFilePath, LogFilename);
+
+				if (!Directory.Exists(Settings.LogFilePath)) Directory.CreateDirectory(Settings.LogFilePath);
+				if (Settings.OverwriteIfExists) TargetMode = FileMode.OpenOrCreate;
+
+				LogFileWriter = new StreamWriter(File.Open(TotalPath, TargetMode, FileAccess.Write, FileShare.ReadWrite));
+			}
+
+			//If user requests no colorization, or the OS is Windows but it's older than Windows 10.
+			if (!Settings.ColorizeOutput || (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Environment.OSVersion.Version.Major < 10))
+			{
+				ConsoleExtensions.Disable();
+			}
+
+			LoggerSettings = Settings;
+		}
+
+		~MatchaLogger()
+		{
+			Dispose(false);
+		}
+
+		/// <summary>
+		/// Call this function to output a log message to the console, file, or any additional streams you have defined.
+		/// </summary>
+		/// <param name="Message">The text to output.</param>
+		/// <param name="Severity">The severity of the message.</param>
+		public void Log(string Message, LogSeverity Severity)
+		{
+			lock (LogLock)
+			{
+				if ((LoggerSettings.AllowedSeverities & Severity) != Severity) return;
+
+				string AssembledMessage = "[".Pastel(Color.White);
+
+				if (LoggerSettings.OutputDate)
+				{
+					AssembledMessage += DateTime.Now.ToString(LoggerSettings.DateFormat).Pastel(Color.LightGray);
+					AssembledMessage += " ";
+				}
+
+				Color MessageColor = Color.LightBlue;
+				switch (Severity)
+				{
+					case LogSeverity.Debug:
+						AssembledMessage += "DBG".Pastel(Color.Teal);
+						AssembledMessage += "] ".Pastel(Color.White);
+						MessageColor = Color.LightSeaGreen;
+						break;
+					case LogSeverity.Information:
+						AssembledMessage += "MSG".Pastel(Color.Cyan);
+						AssembledMessage += "] ".Pastel(Color.White);
+						break;
+					case LogSeverity.Warning:
+						AssembledMessage += "WRN".Pastel(Color.Yellow);
+						AssembledMessage += "] ".Pastel(Color.White);
+						MessageColor = Color.Gold;
+						break;
+					case LogSeverity.Error:
+						AssembledMessage += "ERR".Pastel(Color.Red);
+						AssembledMessage += "] ".Pastel(Color.White);
+						MessageColor = Color.IndianRed;
+						break;
+				}
+
+				AssembledMessage += Message.Pastel(MessageColor);
+
+				//Strip away ANSI color codes, you do not want to clutter up the files.
+				string FilteredOutput = AssembledMessage;
+
+				if (LoggerSettings.ColorizeOutput) FilteredOutput = AnsiRegex.Replace(AssembledMessage, "");
+
+				Console.WriteLine(AssembledMessage);
+				if (LoggerSettings.LogToFile)
+				{
+					LogFileWriter.WriteLine(FilteredOutput);
+					LogFileWriter.Flush();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Turns colorization on or off.
+		/// <para/>
+		/// The change will be reflected in <see cref="MatchaLoggerSettings.ColorizeOutput"/>.
+		/// </summary>
+		/// <param name="Enabled">True if you want to colorize the output, false if you don't.</param>
+		public void ToggleColorization(bool Enabled)
+		{
+			if (Enabled)
+			{
+				ConsoleExtensions.Enable();
+				LoggerSettings.ColorizeOutput = true;
+
+				return;
+			}
+
+			ConsoleExtensions.Disable();
+			LoggerSettings.ColorizeOutput = false;
+		}
+
+		/// <summary>
+		/// Disposes the logger, closing the log file writer if it exists.
+		/// </summary>
+		public void Dispose()
+		{
+			Dispose(true);
+
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool Disposing)
+		{
+			if(!this.Disposed)
+			{
+				if (Disposing)
+				{
+					if(LogFileWriter != null) LogFileWriter.Dispose();
+				}
+
+				Disposed = true;
+			}
+		}
+	}
+}

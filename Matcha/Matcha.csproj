@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Matcha</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>AestheticalZ</Authors>
+    <Description>A simple but neat logging library for .NET 5.0.</Description>
+    <Copyright>Copyright AestheticalZ 2022</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>utility; logging; logger; log</PackageTags>
+    <NeutralLanguage>en-US</NeutralLanguage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
+    <PackageReference Include="Pastel" Version="3.0.0" />
+  </ItemGroup>
+
+</Project>
