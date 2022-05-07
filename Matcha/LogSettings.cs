@@ -1,4 +1,5 @@
-﻿using Pastel;
+﻿using System;
+using System.IO;
 
 namespace Matcha
 {
@@ -35,6 +36,11 @@ namespace Matcha
 		/// This CANNOT be modified after <see cref="MatchaLogger"/> has been created.
 		/// </summary>
 		public bool OverwriteIfExists = false;
+
+		/// <summary>
+		/// Tells Matcha if you want it to log to the console, or whatever <see cref="Stream"/> the <see cref="Console"/> class has set.
+		/// </summary>
+		public bool LogToConsole = true;
 
 		/// <summary>
 		/// Tells Matcha if you want the output to be colorized using ANSI escape sequences.

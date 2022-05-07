@@ -40,6 +40,7 @@ namespace Matcha
 				if (Settings.OverwriteIfExists) TargetMode = FileMode.OpenOrCreate;
 
 				LogFileWriter = new StreamWriter(File.Open(TotalPath, TargetMode, FileAccess.Write, FileShare.ReadWrite));
+				LogFileWriter.WriteLine();
 			}
 
 			//If user requests no colorization, or the OS is Windows but it's older than Windows 10.
@@ -51,6 +52,9 @@ namespace Matcha
 			LoggerSettings = Settings;
 		}
 
+		/// <summary>
+		/// The destructor for <see cref="MatchaLogger"/>.
+		/// </summary>
 		~MatchaLogger()
 		{
 			Dispose(false);
@@ -65,7 +69,7 @@ namespace Matcha
 		{
 			lock (LogLock)
 			{
-				if ((LoggerSettings.AllowedSeverities & Severity) != Severity) return;
+				if (!LoggerSettings.AllowedSeverities.HasFlag(Severity)) return;
 
 				string AssembledMessage = "[".Pastel(Color.White);
 
@@ -80,36 +84,30 @@ namespace Matcha
 				{
 					case LogSeverity.Debug:
 						AssembledMessage += "DBG".Pastel(Color.Teal);
-						AssembledMessage += "] ".Pastel(Color.White);
 						MessageColor = Color.LightSeaGreen;
 						break;
 					case LogSeverity.Information:
 						AssembledMessage += "MSG".Pastel(Color.Cyan);
-						AssembledMessage += "] ".Pastel(Color.White);
 						break;
 					case LogSeverity.Warning:
 						AssembledMessage += "WRN".Pastel(Color.Yellow);
-						AssembledMessage += "] ".Pastel(Color.White);
 						MessageColor = Color.Gold;
 						break;
 					case LogSeverity.Error:
 						AssembledMessage += "ERR".Pastel(Color.Red);
-						AssembledMessage += "] ".Pastel(Color.White);
 						MessageColor = Color.IndianRed;
 						break;
 				}
 
+				AssembledMessage += "] ".Pastel(Color.White);
 				AssembledMessage += Message.Pastel(MessageColor);
 
-				//Strip away ANSI color codes, you do not want to clutter up the files.
-				string FilteredOutput = AssembledMessage;
+				if (LoggerSettings.LogToConsole) Console.WriteLine(AssembledMessage);
 
-				if (LoggerSettings.ColorizeOutput) FilteredOutput = AnsiRegex.Replace(AssembledMessage, "");
-
-				Console.WriteLine(AssembledMessage);
+				if (LoggerSettings.ColorizeOutput) AssembledMessage = AnsiRegex.Replace(AssembledMessage, "");
 				if (LoggerSettings.LogToFile)
 				{
-					LogFileWriter.WriteLine(FilteredOutput);
+					LogFileWriter.WriteLine(AssembledMessage);
 					LogFileWriter.Flush();
 				}
 			}
@@ -147,11 +145,11 @@ namespace Matcha
 
 		protected virtual void Dispose(bool Disposing)
 		{
-			if(!this.Disposed)
+			if (!this.Disposed)
 			{
 				if (Disposing)
 				{
-					if(LogFileWriter != null) LogFileWriter.Dispose();
+					if (LogFileWriter != null) LogFileWriter.Dispose();
 				}
 
 				Disposed = true;
