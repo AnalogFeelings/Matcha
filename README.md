@@ -13,5 +13,8 @@ A simple but neat logging library for .NET 5.0. Includes XML documentation!
 ## Usage
 Create an instance of the `MatchaLoggerSettings` and intitialize it's members before passing it to the constructor of `MatchaLogger`. `MatchaLogger` implements `IDisposable`, so whenever you want to close the logger and dispose the log file stream, call the `Dispose()` method.
 
+## Downloads
+Find this package in [NuGet](https://www.nuget.org/packages/MatchaLogger/).
+
 ## License
 Licensed under the MIT License.
