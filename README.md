@@ -1,4 +1,4 @@
-![Matcha](Matcha.png)
+![Matcha](https://user-images.githubusercontent.com/51166756/167296398-592d7c48-adc2-489c-8e96-5ca4944fb192.png)
 # Matcha
 
 ![GitHub](https://img.shields.io/github/license/aestheticalz/matcha?label=License&style=flat-square)
