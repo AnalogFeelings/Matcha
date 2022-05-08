@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>MatchaLogger</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.3</Version>
     <Authors>AestheticalZ</Authors>
     <Description>A simple but neat logging library for .NET 5.0.</Description>
     <Copyright>Copyright AestheticalZ 2022</Copyright>
