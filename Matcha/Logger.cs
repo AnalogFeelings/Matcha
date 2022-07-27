@@ -60,7 +60,9 @@ namespace Matcha
 		}
 
 		/// <summary>
-		/// Call this function to output a log message to the console, file, or any additional streams you have defined.
+		/// Call this function to output a log message to the console if <see cref="MatchaLoggerSettings.LogToConsole"/> is set to <see langword="true"/>.
+		/// <para/>
+		/// It will also output it to the log file is <see cref="MatchaLoggerSettings.LogToFile"/> is set to <see langword="true"/>.
 		/// </summary>
 		/// <param name="Message">The text to output.</param>
 		/// <param name="Severity">The severity of the message.</param>
@@ -88,6 +90,10 @@ namespace Matcha
 					case LogSeverity.Information:
 						AssembledMessage += "MSG".Pastel(Color.Cyan);
 						break;
+					case LogSeverity.Success:
+						AssembledMessage += "SUC".Pastel(Color.Green);
+						MessageColor = Color.LightGreen;
+						break;
 					case LogSeverity.Warning:
 						AssembledMessage += "WRN".Pastel(Color.Yellow);
 						MessageColor = Color.Gold;
@@ -95,6 +101,10 @@ namespace Matcha
 					case LogSeverity.Error:
 						AssembledMessage += "ERR".Pastel(Color.Red);
 						MessageColor = Color.IndianRed;
+						break;
+					case LogSeverity.Fatal:
+						AssembledMessage += "FTL".Pastel(Color.DarkRed);
+						MessageColor = Color.DarkRed;
 						break;
 				}
 
