@@ -18,10 +18,12 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Matcha.png</PackageIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageReleaseNotes>Add success and fatal log levels.</PackageReleaseNotes>
+    <PackageReleaseNotes>Move to .NET Standard 2.0 from .NET 6.0 for compatibility reasons.</PackageReleaseNotes>
     <Title>MatchaLogger</Title>
-    <PackageVersion>1.2</PackageVersion>
+    <PackageVersion>1.2.1</PackageVersion>
     <PackageLicenseUrl></PackageLicenseUrl>
+    <AssemblyVersion>1.2.1</AssemblyVersion>
+    <FileVersion>1.2.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
