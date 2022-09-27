@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>MatchaLogger</PackageId>
     <Version>1.1.0</Version>
     <Authors>AestheticalZ</Authors>
-    <Description>A simple but neat logging library for .NET 5.0.</Description>
+    <Description>A simple but neat logging library for .NET Standard 2.0.</Description>
     <Copyright>Copyright AestheticalZ 2022</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageTags>utility; logging; logger; log</PackageTags>
@@ -20,6 +20,8 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageReleaseNotes>Add success and fatal log levels.</PackageReleaseNotes>
     <Title>MatchaLogger</Title>
+    <PackageVersion>1.2</PackageVersion>
+    <PackageLicenseUrl></PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
