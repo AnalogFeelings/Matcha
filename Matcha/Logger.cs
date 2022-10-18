@@ -17,11 +17,11 @@ namespace Matcha
 		/// </summary>
 		public MatchaLoggerSettings LoggerSettings { get; set; }
 
-		private StreamWriter LogFileWriter;
-		private Regex AnsiRegex = new Regex("\\x1b([NOP\\\\X^_c]|(\\[[0-9;]*[A-HJKSTfimnsu])|(].+(\\x07|(\\x1b\\\\))))", RegexOptions.Compiled);
+		private StreamWriter _LogFileWriter;
+		private Regex _AnsiRegex = new Regex("\\x1b([NOP\\\\X^_c]|(\\[[0-9;]*[A-HJKSTfimnsu])|(].+(\\x07|(\\x1b\\\\))))", RegexOptions.Compiled);
 
-		private object LogLock = new object();
-		private bool Disposed = false;
+		private object _LogLock = new object();
+		private bool _Disposed = false;
 
 		/// <summary>
 		/// The constructor for <see cref="MatchaLogger"/>.
@@ -31,15 +31,15 @@ namespace Matcha
 		{
 			if (Settings.LogToFile)
 			{
-				FileMode TargetMode = FileMode.Append;
+				FileMode targetMode = FileMode.Append;
 
-				string LogFilename = DateTime.Now.ToString(Settings.FilenameFormat) + ".txt";
-				string TotalPath = Path.Combine(Settings.LogFilePath, LogFilename);
+				string logFilename = DateTime.Now.ToString(Settings.FilenameFormat) + ".txt";
+				string totalPath = Path.Combine(Settings.LogFilePath, logFilename);
 
 				if (!Directory.Exists(Settings.LogFilePath)) Directory.CreateDirectory(Settings.LogFilePath);
-				if (Settings.OverwriteIfExists) TargetMode = FileMode.OpenOrCreate;
+				if (Settings.OverwriteIfExists) targetMode = FileMode.OpenOrCreate;
 
-				LogFileWriter = new StreamWriter(File.Open(TotalPath, TargetMode, FileAccess.Write, FileShare.ReadWrite));
+				_LogFileWriter = new StreamWriter(File.Open(totalPath, targetMode, FileAccess.Write, FileShare.ReadWrite));
 			}
 
 			//If user requests no colorization, or the OS is Windows but it's older than Windows 10.
@@ -68,56 +68,57 @@ namespace Matcha
 		/// <param name="Severity">The severity of the message.</param>
 		public void Log(string Message, LogSeverity Severity)
 		{
-			lock (LogLock)
+			lock (_LogLock)
 			{
 				if (!LoggerSettings.AllowedSeverities.HasFlag(Severity)) return;
 
-				string AssembledMessage = "[".Pastel(Color.White);
+				string assembledMessage = "[".Pastel(Color.White);
 
 				if (LoggerSettings.OutputDate)
 				{
-					AssembledMessage += DateTime.Now.ToString(LoggerSettings.DateFormat).Pastel(Color.LightGray);
-					AssembledMessage += " ";
+					assembledMessage += DateTime.Now.ToString(LoggerSettings.DateFormat).Pastel(Color.LightGray);
+					assembledMessage += " ";
 				}
 
-				Color MessageColor = Color.LightBlue;
+				Color messageColor = Color.LightBlue;
 				switch (Severity)
 				{
 					case LogSeverity.Debug:
-						AssembledMessage += "DBG".Pastel(Color.Teal);
-						MessageColor = Color.LightSeaGreen;
+						assembledMessage += "DBG".Pastel(Color.Teal);
+						messageColor = Color.LightSeaGreen;
 						break;
 					case LogSeverity.Information:
-						AssembledMessage += "MSG".Pastel(Color.Cyan);
+						assembledMessage += "MSG".Pastel(Color.Cyan);
 						break;
 					case LogSeverity.Success:
-						AssembledMessage += "SUC".Pastel(Color.Green);
-						MessageColor = Color.LightGreen;
+						assembledMessage += "SUC".Pastel(Color.Green);
+						messageColor = Color.LightGreen;
 						break;
 					case LogSeverity.Warning:
-						AssembledMessage += "WRN".Pastel(Color.Yellow);
-						MessageColor = Color.Gold;
+						assembledMessage += "WRN".Pastel(Color.Yellow);
+						messageColor = Color.PaleGoldenrod;
 						break;
 					case LogSeverity.Error:
-						AssembledMessage += "ERR".Pastel(Color.Red);
-						MessageColor = Color.IndianRed;
+						assembledMessage += "ERR".Pastel(Color.Red);
+						messageColor = Color.IndianRed;
 						break;
 					case LogSeverity.Fatal:
-						AssembledMessage += "FTL".Pastel(Color.DarkRed);
-						MessageColor = Color.DarkRed;
+						assembledMessage += "FTL".Pastel(Color.DarkRed);
+						messageColor = Color.DarkRed;
 						break;
 				}
 
-				AssembledMessage += "] ".Pastel(Color.White);
-				AssembledMessage += Message.Pastel(MessageColor);
+				assembledMessage += "] ".Pastel(Color.White);
+				assembledMessage += Message.Pastel(messageColor);
 
-				if (LoggerSettings.LogToConsole) Console.WriteLine(AssembledMessage);
+				if (LoggerSettings.LogToConsole) Console.WriteLine(assembledMessage);
 
-				if (LoggerSettings.ColorizeOutput) AssembledMessage = AnsiRegex.Replace(AssembledMessage, "");
 				if (LoggerSettings.LogToFile)
 				{
-					LogFileWriter.WriteLine(AssembledMessage);
-					LogFileWriter.Flush();
+					if (LoggerSettings.ColorizeOutput) assembledMessage = _AnsiRegex.Replace(assembledMessage, "");
+					
+					_LogFileWriter.WriteLine(assembledMessage);
+					_LogFileWriter.Flush();
 				}
 			}
 		}
@@ -154,14 +155,14 @@ namespace Matcha
 
 		protected virtual void Dispose(bool Disposing)
 		{
-			if (!this.Disposed)
+			if (!this._Disposed)
 			{
 				if (Disposing)
 				{
-					if (LogFileWriter != null) LogFileWriter.Dispose();
+					if (_LogFileWriter != null) _LogFileWriter.Dispose();
 				}
 
-				Disposed = true;
+				_Disposed = true;
 			}
 		}
 	}
