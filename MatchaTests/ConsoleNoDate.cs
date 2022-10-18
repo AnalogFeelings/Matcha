@@ -27,9 +27,9 @@ namespace MatchaTests
                 using (MatchaLogger Logger = new MatchaLogger(Settings))
                 {
                     string ExpectedDebug = "[".Pastel(Color.White) +
-                    "DBG".Pastel(Color.Teal) +
-                    "] ".Pastel(Color.White) +
-                    "This is a debug message!".Pastel(Color.LightSeaGreen);
+                        "DBG".Pastel(Color.Teal) +
+                        "] ".Pastel(Color.White) +
+                        "This is a debug message!".Pastel(Color.LightSeaGreen);
                     string ExpectedSuccess = "[".Pastel(Color.White) +
                         "SUC".Pastel(Color.Green) +
                         "] ".Pastel(Color.White) +
