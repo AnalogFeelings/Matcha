@@ -23,6 +23,27 @@ namespace Matcha
 		
 		private bool _Disposed = false;
 
+		private string _DebugName;
+		private string _InformationName;
+		private string _SuccessName;
+		private string _WarningName;
+		private string _ErrorName;
+		private string _FatalName;
+
+		private const string _SHORT_DEBUG_NAME = "@";
+		private const string _SHORT_INFORMATION_NAME = "*";
+		private const string _SHORT_SUCCESS_NAME = "√";
+		private const string _SHORT_WARNING_NAME = "!";
+		private const string _SHORT_ERROR_NAME = "~";
+		private const string _SHORT_FATAL_NAME = "X";
+
+		private const string _LONG_DEBUG_NAME = "DBG";
+		private const string _LONG_INFORMATION_NAME = "MSG";
+		private const string _LONG_SUCCESS_NAME = "SUC";
+		private const string _LONG_WARNING_NAME = "WRN";
+		private const string _LONG_ERROR_NAME = "ERR";
+		private const string _LONG_FATAL_NAME = "FTL";
+
 		/// <summary>
 		/// The constructor for <see cref="MatchaLogger"/>.
 		/// </summary>
@@ -40,6 +61,25 @@ namespace Matcha
 				if (Settings.OverwriteIfExists) targetMode = FileMode.OpenOrCreate;
 
 				_LogFileWriter = new StreamWriter(File.Open(totalPath, targetMode, FileAccess.Write, FileShare.ReadWrite));
+			}
+
+			if (Settings.UseShortNames)
+			{
+				_DebugName = _SHORT_DEBUG_NAME;
+				_InformationName = _SHORT_INFORMATION_NAME;
+				_SuccessName = _SHORT_SUCCESS_NAME;
+				_WarningName = _SHORT_WARNING_NAME;
+				_ErrorName = _SHORT_ERROR_NAME;
+				_FatalName = _SHORT_FATAL_NAME;
+			}
+			else
+			{
+				_DebugName = _LONG_DEBUG_NAME;
+				_InformationName = _LONG_INFORMATION_NAME;
+				_SuccessName = _LONG_SUCCESS_NAME;
+				_WarningName = _LONG_WARNING_NAME;
+				_ErrorName = _LONG_ERROR_NAME;
+				_FatalName = _LONG_FATAL_NAME;
 			}
 
 			//If user requests no colorization, or the OS is Windows but it's older than Windows 10.
@@ -84,26 +124,26 @@ namespace Matcha
 				switch (Severity)
 				{
 					case LogSeverity.Debug:
-						assembledMessage += "DBG".Pastel(Color.Teal);
+						assembledMessage += _DebugName.Pastel(Color.Teal);
 						messageColor = Color.LightSeaGreen;
 						break;
 					case LogSeverity.Information:
-						assembledMessage += "MSG".Pastel(Color.Cyan);
+						assembledMessage += _InformationName.Pastel(Color.Cyan);
 						break;
 					case LogSeverity.Success:
-						assembledMessage += "SUC".Pastel(Color.Green);
+						assembledMessage += _SuccessName.Pastel(Color.Green);
 						messageColor = Color.LightGreen;
 						break;
 					case LogSeverity.Warning:
-						assembledMessage += "WRN".Pastel(Color.Yellow);
+						assembledMessage += _WarningName.Pastel(Color.Yellow);
 						messageColor = Color.PaleGoldenrod;
 						break;
 					case LogSeverity.Error:
-						assembledMessage += "ERR".Pastel(Color.Red);
+						assembledMessage += _ErrorName.Pastel(Color.Red);
 						messageColor = Color.IndianRed;
 						break;
 					case LogSeverity.Fatal:
-						assembledMessage += "FTL".Pastel(Color.DarkRed);
+						assembledMessage += _FatalName.Pastel(Color.DarkRed);
 						messageColor = Color.DarkRed;
 						break;
 				}
@@ -128,19 +168,55 @@ namespace Matcha
 		/// <para/>
 		/// The change will be reflected in <see cref="MatchaLoggerSettings.ColorizeOutput"/>.
 		/// </summary>
-		/// <param name="Enabled">True if you want to colorize the output, false if you don't.</param>
+		/// <param name="Enabled"><see langword="true"/> if you want to colorize the output, <see langword="false"/> if you don't.</param>
 		public void ToggleColorization(bool Enabled)
 		{
-			if (Enabled)
+			lock (_LogLock)
 			{
-				ConsoleExtensions.Enable();
-				LoggerSettings.ColorizeOutput = true;
+				if (Enabled)
+				{
+					ConsoleExtensions.Enable();
+					LoggerSettings.ColorizeOutput = true;
 
-				return;
+					return;
+				}
+
+				ConsoleExtensions.Disable();
+				LoggerSettings.ColorizeOutput = false;
 			}
+		}
 
-			ConsoleExtensions.Disable();
-			LoggerSettings.ColorizeOutput = false;
+		/// <summary>
+		/// Turns short names on or off.
+		/// <para/>
+		/// The change will be reflected in <see cref="MatchaLoggerSettings.UseShortNames"/>.
+		/// </summary>
+		/// <param name="Enabled"><see langword="true"/> if you want to use short names, <see langword="false"/> if you don't.</param>
+		public void ToggleShortNames(bool Enabled)
+		{
+			lock (_LogLock)
+			{
+				LoggerSettings.UseShortNames = Enabled;
+
+				if (LoggerSettings.UseShortNames)
+				{
+					_DebugName = _SHORT_DEBUG_NAME;
+					_InformationName = _SHORT_INFORMATION_NAME;
+					_SuccessName = _SHORT_SUCCESS_NAME;
+					_WarningName = _SHORT_WARNING_NAME;
+					_ErrorName = _SHORT_ERROR_NAME;
+					_FatalName = _SHORT_FATAL_NAME;
+				}
+				else
+				{
+					_DebugName = _LONG_DEBUG_NAME;
+					_InformationName = _LONG_INFORMATION_NAME;
+					_SuccessName = _LONG_SUCCESS_NAME;
+					_WarningName = _LONG_WARNING_NAME;
+					_ErrorName = _LONG_ERROR_NAME;
+					_FatalName = _LONG_FATAL_NAME;
+				}
+			}
 		}
 
 		/// <summary>
