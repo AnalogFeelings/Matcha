@@ -17,10 +17,10 @@ namespace Matcha
 		/// </summary>
 		public MatchaLoggerSettings LoggerSettings { get; set; }
 
-		private StreamWriter _LogFileWriter;
-		private Regex _AnsiRegex = new Regex("\\x1b([NOP\\\\X^_c]|(\\[[0-9;]*[A-HJKSTfimnsu])|(].+(\\x07|(\\x1b\\\\))))", RegexOptions.Compiled);
-
-		private object _LogLock = new object();
+		private readonly StreamWriter _LogFileWriter;
+		private readonly Regex _AnsiRegex = new Regex("\\x1b([NOP\\\\X^_c]|(\\[[0-9;]*[A-HJKSTfimnsu])|(].+(\\x07|(\\x1b\\\\))))", RegexOptions.Compiled);
+		private readonly object _LogLock = new object();
+		
 		private bool _Disposed = false;
 
 		/// <summary>
