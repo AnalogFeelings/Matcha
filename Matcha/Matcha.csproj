@@ -5,15 +5,15 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>MatchaLogger</PackageId>
     <Version>1.1.0</Version>
-    <Authors>AestheticalZ</Authors>
+    <Authors>Analog Feelings</Authors>
     <Description>A simple but neat logging library for .NET Standard 2.0.</Description>
-    <Copyright>Copyright AestheticalZ 2022</Copyright>
+    <Copyright>Copyright Analog Feelings 2022</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageTags>utility; logging; logger; log</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>git@github.com:AestheticalZ/Matcha.git</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/AestheticalZ/Matcha</PackageProjectUrl>
+    <RepositoryUrl>git@github.com:AnalogFeelings/Matcha.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/AnalogFeelings/Matcha</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Matcha.png</PackageIcon>
