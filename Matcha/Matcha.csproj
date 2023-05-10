@@ -22,8 +22,8 @@
     <Title>MatchaLogger</Title>
     <PackageVersion>1.2.1</PackageVersion>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <AssemblyVersion>1.2.1</AssemblyVersion>
-    <FileVersion>1.2.1</FileVersion>
+    <AssemblyVersion>1.2.2</AssemblyVersion>
+    <FileVersion>1.2.2</FileVersion>
     <LangVersion>11</LangVersion>
   </PropertyGroup>
 
