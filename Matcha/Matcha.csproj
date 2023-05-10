@@ -18,9 +18,9 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>Matcha.png</PackageIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageReleaseNotes>Move to .NET Standard 2.0 from .NET 6.0 for compatibility reasons.</PackageReleaseNotes>
+    <PackageReleaseNotes>Housekeeping, no changes.</PackageReleaseNotes>
     <Title>MatchaLogger</Title>
-    <PackageVersion>1.2.1</PackageVersion>
+    <PackageVersion>1.2.2</PackageVersion>
     <PackageLicenseUrl></PackageLicenseUrl>
     <AssemblyVersion>1.2.2</AssemblyVersion>
     <FileVersion>1.2.2</FileVersion>
