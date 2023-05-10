@@ -1,5 +1,4 @@
-﻿using System;
-using Matcha;
+﻿using Matcha;
 
 namespace MatchaExample
 {
@@ -21,17 +20,7 @@ namespace MatchaExample
             Logger.Log("I'm a warning message!", LogSeverity.Warning);
             Logger.Log("I'm an error message!", LogSeverity.Error);
             Logger.Log("I'm a fatal message!", LogSeverity.Fatal);
-            
-            Logger.ToggleShortNames(true);
-            
-            Logger.Log("I'm a debug message with short name!", LogSeverity.Debug);
-            Logger.Log("I'm an information message with short name!", LogSeverity.Information);
-            Logger.Log("I'm a success message with short name!", LogSeverity.Success);
-            Logger.Log("I'm a warning message with short name!", LogSeverity.Warning);
-            Logger.Log("I'm an error message with short name!", LogSeverity.Error);
-            Logger.Log("I'm a fatal message with short name!", LogSeverity.Fatal);
 
-            Logger.ToggleShortNames(false);
             Logger.LoggerSettings.LogToFile = false;
 
             Logger.Log("I'm a debug message, and I won't appear in the log file!", LogSeverity.Debug);
@@ -62,9 +51,6 @@ namespace MatchaExample
             Logger.Log("I'm a warning message, I'm not colorized either, and guess what, I also don't appear in the log file!", LogSeverity.Warning);
             Logger.Log("I'm an error message, I'm not colorized, and I too don't appear in the log file!", LogSeverity.Error);
             Logger.Log("I'm a fatal message, I'm not colorized, and I too don't appear in the log file!", LogSeverity.Fatal);
-
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
         }
     }
 }

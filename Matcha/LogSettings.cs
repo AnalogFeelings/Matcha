@@ -63,15 +63,6 @@ namespace Matcha
         public string DateFormat = "g";
 
         /// <summary>
-        /// Tells Matcha to use short names e.g. MSG gets turned into "*", SUC gets turned into "√".
-        /// <para/>
-        /// This is <see langword="false"/> by default.
-        /// <para/>
-        /// Use <see cref="MatchaLogger.ToggleShortNames(bool)"/> to turn colorization on and off during runtime.
-        /// </summary>
-        public bool UseShortNames = false;
-        
-        /// <summary>
         /// A bit field that tells Matcha which log severities to output.
         /// <para/>
         /// For example, you may prefer to show <see cref="LogSeverity.Debug"/> logs on the DEBUG configuration, or hide <see cref="LogSeverity.Information"/> on RELEASE configuration.
