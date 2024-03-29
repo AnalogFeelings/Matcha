@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>AnalogFeelings.Matcha</PackageId>
+        <Version>2.0.0</Version>
+        <Title>Matcha</Title>
+        <Authors>Analog Feelings</Authors>
+        <Description>A simple but neat logging library for .NET Standard 2.1, originally developed for usage in Samm-Bot.</Description>
+        <Copyright>© Copyright Analog Feelings 2022-2024</Copyright>
+        <PackageIcon>matcha.png</PackageIcon>
+        <RepositoryUrl>https://github.com/AnalogFeelings/Matcha.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>utility; logging; logger; log</PackageTags>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <LangVersion>12</LangVersion>
+        <AssemblyVersion>2.0.0</AssemblyVersion>
+        <FileVersion>2.0.0</FileVersion>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\..\Branding\matcha.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+        <Link>matcha.png</Link>
+      </None>
+    </ItemGroup>
+
+</Project>
