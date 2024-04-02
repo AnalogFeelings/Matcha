@@ -21,15 +21,16 @@
 // SOFTWARE.
 #endregion
 
-using Matcha.Models;
+using AnalogFeelings.Matcha.Models;
 
-namespace Matcha.Interfaces;
+namespace AnalogFeelings.Matcha.Interfaces;
 
 /// <summary>
 /// An interface to implement a Matcha logging sink.
 /// </summary>
 /// <remarks>
-/// Sinks may optionally implement <see cref="IDisposable"/> if necessary.
+/// Sinks may implement <see cref="IDisposable"/>, Matcha will
+/// dispose them automatically.
 /// </remarks>
 public interface IMatchaSink
 {
@@ -37,5 +38,5 @@ public interface IMatchaSink
     /// Called when a log entry is ready to be written to the sink.
     /// </summary>
     /// <param name="entry">The target log entry.</param>
-    public void WriteLog(LogEntry entry);
+    public Task WriteLogAsync(LogEntry entry);
 }

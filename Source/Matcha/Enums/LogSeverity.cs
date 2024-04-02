@@ -21,7 +21,7 @@
 // SOFTWARE.
 #endregion
 
-namespace Matcha.Enums;
+namespace AnalogFeelings.Matcha.Enums;
 
 /// <summary>
 /// Denotes different log message severities.

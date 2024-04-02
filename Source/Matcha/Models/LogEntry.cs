@@ -21,9 +21,9 @@
 // SOFTWARE.
 #endregion
 
-using Matcha.Enums;
+using AnalogFeelings.Matcha.Enums;
 
-namespace Matcha.Models;
+namespace AnalogFeelings.Matcha.Models;
 
 /// <summary>
 /// A structure containing a Matcha log entry and its related data.
@@ -44,11 +44,6 @@ public record LogEntry
     /// The time the log entry was created at.
     /// </summary>
     public required DateTime Time { get; init; }
-    
-    /// <summary>
-    /// The source method of the log entry.
-    /// </summary>
-    public required string Source { get; init; }
     
     /// <summary>
     /// The formatting parameters.

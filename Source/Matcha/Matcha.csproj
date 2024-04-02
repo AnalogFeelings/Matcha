@@ -22,6 +22,7 @@
         <FileVersion>2.0.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <RootNamespace>AnalogFeelings.Matcha</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
