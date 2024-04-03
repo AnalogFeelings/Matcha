@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -17,12 +16,14 @@
         <PackageTags>utility; logging; logger; log</PackageTags>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>NUGET_README.md</PackageReadmeFile>
         <LangVersion>12</LangVersion>
         <AssemblyVersion>2.0.0</AssemblyVersion>
         <FileVersion>2.0.0</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <RootNamespace>AnalogFeelings.Matcha</RootNamespace>
+        <AssemblyName>AnalogFeelings.Matcha</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -30,7 +31,13 @@
         <Pack>True</Pack>
         <PackagePath></PackagePath>
         <Link>matcha.png</Link>
+        <Visible>false</Visible>
+      </None>
+      <None Include="..\..\NUGET_README.md">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+        <Link>NUGET_README.md</Link>
+        <Visible>false</Visible>
       </None>
     </ItemGroup>
-
 </Project>
