@@ -45,12 +45,12 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
     /// </summary>
     private readonly Dictionary<LogSeverity, SeverityData> _severityDict = new Dictionary<LogSeverity, SeverityData>()
     {
-        [LogSeverity.Debug] = ("DBG", "#008080", "#20B2AA"),
+        [LogSeverity.Debug] = ("DBG", "#D10691", "#C95BA6"),
         [LogSeverity.Information] = ("INF", "#00FFFF", "#ADD8E6"),
-        [LogSeverity.Success] = ("SCS", "#008000", "#90EE90"),
+        [LogSeverity.Success] = ("SCS", "#00FF00", "#90EE90"),
         [LogSeverity.Warning] = ("WRN", "#FFFF00", "#EEE8AA"),
         [LogSeverity.Error] = ("ERR", "#FF0000", "#CD5C5C"),
-        [LogSeverity.Fatal] = ("FTL", "#8B0000", "#8B0000")
+        [LogSeverity.Fatal] = ("FTL", "#FF8000", "#FFA245")
     };
 
     /// <summary>
@@ -127,17 +127,14 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
                 newLineHeader = newLineHeaderBuilder.ToString().Pastel("#FFFFFF");
             }
 
-            // Low budget for loop (silly)
-            int currentLine = 0;
-            foreach (string contentLine in splittedContent)
+            for (int i = 0; i < splittedContent.Length; i++)
             {
+                string contentLine = splittedContent[i];
                 string contentLineColored = contentLine.Pastel(data.TextColor);
 
-                fullBuilder.Append(currentLine != 0 ? newLineHeader : logHeader);
+                fullBuilder.Append(i != 0 ? newLineHeader : logHeader);
                 fullBuilder.Append(' ').Append(contentLineColored);
                 fullBuilder.Append(Environment.NewLine);
-
-                currentLine++;
             }
         
             Console.Write(fullBuilder.ToString());
