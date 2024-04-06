@@ -63,27 +63,18 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
     /// </summary>
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
-    /// <summary>
-    /// Lower-left corner of a box.
-    /// </summary>
+    // Reduces GC pressure.
+    private readonly StringBuilder _logHeaderBuilder = new StringBuilder();
+    private readonly StringBuilder _fullBuilder = new StringBuilder();
+    private readonly StringBuilder _indentBuilder = new StringBuilder();
+
     private const char _BOX_UPRIGHT = '\u2514';
-    /// <summary>
-    /// Middle-left corner of a box.
-    /// </summary>
     private const char _BOX_VERTRIGHT = '\u251c';
-    /// <summary>
-    /// Horizontal border of a box.
-    /// </summary>
     private const char _BOX_HORIZONTAL = '\u2500';
 
     /// <inheritdoc/>
     public async Task WriteLogAsync(LogEntry entry)
     {
-        if (!Config.Enabled)
-            return;
-        if ((int)Config.SeverityFilterLevel > (int)entry.Severity)
-            return;
-
         await _semaphore.WaitAsync();
 
         try
@@ -92,19 +83,18 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
                 ConsoleExtensions.Enable();
             else
                 ConsoleExtensions.Disable();
-
-            StringBuilder logHeaderBuilder = new StringBuilder();
+            
             int logHeaderLength = 1;
         
             // Using a char is faster.
-            logHeaderBuilder.Append('[');
+            _logHeaderBuilder.Append('[');
 
             if (Config.OutputDate)
             {
                 string date = entry.Time.ToString(Config.DateFormat);
                 string dateColored = date.Pastel(ColorConstants.LIGHT_GRAY);
 
-                logHeaderBuilder.Append(dateColored).Append(' ');
+                _logHeaderBuilder.Append(dateColored).Append(' ');
 
                 // Account for the space.
                 logHeaderLength += date.Length + 1;
@@ -113,35 +103,32 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
             SeverityData data = _severityDict[entry.Severity];
             string header = data.Header.Pastel(data.HeaderColor);
 
-            logHeaderBuilder.Append(header).Append(']');
+            _logHeaderBuilder.Append(header).Append(']');
 
             logHeaderLength += data.Header.Length + 1;
 
-            string logHeader = logHeaderBuilder.ToString().Pastel(ColorConstants.WHITE);
-            
-            string newLineHeaderFirst = string.Empty;
-            string newLineHeaderLast = string.Empty;
+            string logHeader = _logHeaderBuilder.ToString().Pastel(ColorConstants.WHITE);
             
             string formattedContent = string.Format(entry.Content, entry.Format);
             string[] splittedContent = formattedContent.Split(_newlineArray, StringSplitOptions.None);
+
+            string indentMiddle = string.Empty;
+            string indentLast = string.Empty;
             
-            StringBuilder fullBuilder = new StringBuilder();
-            StringBuilder newLineHeaderBuilder = new StringBuilder();
-                    
             if (splittedContent.Length > 1)
             {
-                newLineHeaderBuilder.Append(_BOX_UPRIGHT).Append(new string(_BOX_HORIZONTAL, logHeaderLength - 1));
+                _indentBuilder.Append(_BOX_UPRIGHT).Append(new string(_BOX_HORIZONTAL, logHeaderLength - 1));
 
-                newLineHeaderLast = newLineHeaderBuilder.ToString().Pastel(ColorConstants.WHITE);
+                indentLast = _indentBuilder.ToString().Pastel(ColorConstants.WHITE);
             }
             if (splittedContent.Length > 2)
             {
                 // Only bother initializing middle header if we got more than 2 lines total.
-                newLineHeaderBuilder.Clear();
+                _indentBuilder.Clear();
                 
-                newLineHeaderBuilder.Append(_BOX_VERTRIGHT).Append(new string(_BOX_HORIZONTAL, logHeaderLength - 1));
+                _indentBuilder.Append(_BOX_VERTRIGHT).Append(new string(_BOX_HORIZONTAL, logHeaderLength - 1));
                 
-                newLineHeaderFirst = newLineHeaderBuilder.ToString().Pastel(ColorConstants.WHITE);
+                indentMiddle = _indentBuilder.ToString().Pastel(ColorConstants.WHITE);
             }
 
             for (int i = 0; i < splittedContent.Length; i++)
@@ -151,34 +138,38 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
                 
                 if (i == 0)
                 {
-                    fullBuilder.Append(logHeader);
+                    _fullBuilder.Append(logHeader);
                 }
                 // Are we on the second line?
                 else if (i == 1)
                 {
                     // Theres only 2 lines, put the end already.
                     if(splittedContent.Length == 2)
-                        fullBuilder.Append(newLineHeaderLast);
+                        _fullBuilder.Append(indentLast);
                     else if(splittedContent.Length > 2)
-                        fullBuilder.Append(newLineHeaderFirst);
+                        _fullBuilder.Append(indentMiddle);
                 }
                 else if (i > 1)
                 {
                     // We are on the last line!
                     if(i == splittedContent.Length - 1)
-                        fullBuilder.Append(newLineHeaderLast);
+                        _fullBuilder.Append(indentLast);
                     else
-                        fullBuilder.Append(newLineHeaderFirst);
+                        _fullBuilder.Append(indentMiddle);
                 }
                 
-                fullBuilder.Append(' ').Append(contentLineColored);
-                fullBuilder.Append(Environment.NewLine);
+                _fullBuilder.Append(' ').Append(contentLineColored);
+                _fullBuilder.Append(Environment.NewLine);
             }
         
-            Console.Write(fullBuilder.ToString());
+            Console.Write(_fullBuilder.ToString());
         }
         finally
         {
+            _logHeaderBuilder.Clear();
+            _fullBuilder.Clear();
+            _indentBuilder.Clear();
+            
             _semaphore.Release();
         }
     }
