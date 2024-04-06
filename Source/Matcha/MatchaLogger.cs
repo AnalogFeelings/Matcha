@@ -21,6 +21,7 @@
 // SOFTWARE.
 #endregion
 
+using System.Runtime.CompilerServices;
 using AnalogFeelings.Matcha.Enums;
 using AnalogFeelings.Matcha.Interfaces;
 using AnalogFeelings.Matcha.Models;
@@ -36,13 +37,13 @@ public sealed class MatchaLogger : IDisposable
     /// <summary>
     /// An array of the currently used logging sinks.
     /// </summary>
-    private readonly IMatchaSink[] _sinks;
+    private readonly IMatchaSink<SinkConfig>[] _sinks;
 
     /// <summary>
     /// Creates a new instance of Matcha.
     /// </summary>
     /// <param name="sinks">The logging sinks to use.</param>
-    public MatchaLogger(params IMatchaSink[] sinks)
+    public MatchaLogger(params IMatchaSink<SinkConfig>[] sinks)
     {
         _sinks = sinks;
     }
@@ -53,9 +54,10 @@ public sealed class MatchaLogger : IDisposable
     /// <param name="severity">The severity of the log message.</param>
     /// <param name="message">The message to log.</param>
     /// <param name="format">The string format parameters.</param>
-    /// <exception cref="ArgumentException">Thrown if <see cref="message"/> is empty.</exception>
-    /// <exception cref="ArgumentNullException">Thrown if <see cref="message"/> is null.</exception>
-    public void Log(LogSeverity severity, string message, params object[]? format) =>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="message"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="message"/> is null.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Log(LogSeverity severity, string message, params object?[]? format) =>
         LogAsync(severity, message, format).GetAwaiter().GetResult();
 
     /// <summary>
@@ -64,14 +66,16 @@ public sealed class MatchaLogger : IDisposable
     /// <param name="severity">The severity of the log message.</param>
     /// <param name="message">The message to log.</param>
     /// <param name="format">The string format parameters.</param>
-    /// <exception cref="ArgumentException">Thrown if <see cref="message"/> is empty.</exception>
-    /// <exception cref="ArgumentNullException">Thrown if <see cref="message"/> is null.</exception>
-    public async Task LogAsync(LogSeverity severity, string message, params object[]? format)
+    /// <exception cref="ArgumentException">Thrown if <paramref name="message"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="message"/> is null.</exception>
+    public async Task LogAsync(LogSeverity severity, string message, params object?[]? format)
     {
         ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
 
         if (_sinks.Length == 0)
             return;
+
+        object?[] formatArray = format ?? Array.Empty<object>();
 
         List<Task> taskList = new List<Task>();
         LogEntry entry = new LogEntry()
@@ -79,10 +83,10 @@ public sealed class MatchaLogger : IDisposable
             Content = message,
             Severity = severity,
             Time = DateTime.Now,
-            Format = format
+            Format = formatArray
         };
 
-        foreach (IMatchaSink sink in _sinks)
+        foreach (IMatchaSink<SinkConfig> sink in _sinks)
         {
             taskList.Add(sink.WriteLogAsync(entry));
         }
@@ -93,7 +97,7 @@ public sealed class MatchaLogger : IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        foreach (IMatchaSink sink in _sinks)
+        foreach (IMatchaSink<SinkConfig> sink in _sinks)
         {
             (sink as IDisposable)?.Dispose();
         }

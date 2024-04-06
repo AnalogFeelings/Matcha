@@ -26,27 +26,17 @@ using AnalogFeelings.Matcha.Enums;
 namespace AnalogFeelings.Matcha.Models;
 
 /// <summary>
-/// A structure containing a Matcha log entry and its related data.
+/// Defines common settings that all sink config classes should have.
 /// </summary>
-public record LogEntry
+public record SinkConfig
 {
     /// <summary>
-    /// The log entry's severity.
+    /// Specifies the minimum level of the outputted severities.
     /// </summary>
-    public required LogSeverity Severity { get; init; }
-    
+    public LogSeverity SeverityFilterLevel = LogSeverity.Debug;
+
     /// <summary>
-    /// The log entry's message.
+    /// Specifies if the sink is enabled.
     /// </summary>
-    public required string Content { get; init; }
-    
-    /// <summary>
-    /// The time the log entry was created at.
-    /// </summary>
-    public required DateTime Time { get; init; }
-    
-    /// <summary>
-    /// The formatting parameters.
-    /// </summary>
-    public required object?[] Format { get; init; }
+    public bool Enabled = true;
 }

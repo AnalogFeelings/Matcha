@@ -26,7 +26,6 @@ namespace AnalogFeelings.Matcha.Enums;
 /// <summary>
 /// Denotes different log message severities.
 /// </summary>
-[Flags]
 public enum LogSeverity
 {
     /// <summary>
@@ -35,35 +34,30 @@ public enum LogSeverity
     /// <remarks>
     /// This severity should be filtered on release builds.
     /// </remarks>
-    Debug = 1,
+    Debug,
     
     /// <summary>
     /// Used to log non-urgent information about the program's execution.
     /// </summary>
-    Information = 2,
+    Information,
     
     /// <summary>
     /// Used to log a successful operation's completion.
     /// </summary>
-    Success = 4,
+    Success,
     
     /// <summary>
     /// Used to log a potentially dangerous situation.
     /// </summary>
-    Warning = 8,
+    Warning,
     
     /// <summary>
     /// Used to log an error in the program's execution.
     /// </summary>
-    Error = 16,
+    Error,
     
     /// <summary>
     /// Used to log a catastrophic error which cannot be recovered from.
     /// </summary>
-    Fatal = 32,
-    
-    /// <summary>
-    /// Convenient alias for all of the log severities.
-    /// </summary>
-    All = Debug | Information | Success | Warning | Error | Fatal
+    Fatal,
 }

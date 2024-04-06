@@ -32,8 +32,13 @@ namespace AnalogFeelings.Matcha.Interfaces;
 /// Sinks may implement <see cref="IDisposable"/>, Matcha will
 /// dispose them automatically.
 /// </remarks>
-public interface IMatchaSink
+public interface IMatchaSink<out T> where T : SinkConfig
 {
+    /// <summary>
+    /// The sink's configuration.
+    /// </summary>
+    public T Config { get; }
+    
     /// <summary>
     /// Called when a log entry is ready to be written to the sink.
     /// </summary>
