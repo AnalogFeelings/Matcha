@@ -78,7 +78,9 @@ public sealed class MatchaLogger : IDisposable
 
         object?[] formatArray = format ?? Array.Empty<object>();
 
-        List<Task> taskList = new List<Task>();
+        // Check if at least one sink is enabled or usable.
+        bool passedTests = false;
+        Task[] taskArray = new Task[_sinks.Length];
         LogEntry entry = new LogEntry()
         {
             Content = message,
@@ -87,17 +89,23 @@ public sealed class MatchaLogger : IDisposable
             Format = formatArray
         };
 
-        foreach (IMatchaSink<SinkConfig> sink in _sinks)
+        for (int i = 0; i < _sinks.Length; i++)
         {
+            IMatchaSink<SinkConfig> sink = _sinks[i];
+            
             if (!sink.Config.Enabled)
                 continue;
             if ((int)sink.Config.SeverityFilterLevel > (int)severity)
                 continue;
-            
-            taskList.Add(sink.WriteLogAsync(entry));
+
+            taskArray[i] = sink.WriteLogAsync(entry);
+            passedTests = true;
         }
 
-        await Task.WhenAll(taskList);
+        if (!passedTests)
+            return;
+
+        await Task.WhenAll(taskArray);
     }
     
     /// <inheritdoc/>
