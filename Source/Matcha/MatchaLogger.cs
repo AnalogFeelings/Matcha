@@ -21,6 +21,7 @@
 // SOFTWARE.
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using AnalogFeelings.Matcha.Enums;
 using AnalogFeelings.Matcha.Interfaces;
@@ -57,7 +58,7 @@ public sealed class MatchaLogger : IDisposable
     /// <exception cref="ArgumentException">Thrown if <paramref name="message"/> is empty.</exception>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="message"/> is null.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Log(LogSeverity severity, string message, params object?[]? format) =>
+    public void Log(LogSeverity severity, [StringSyntax(StringSyntaxAttribute.CompositeFormat)] string message, params object?[]? format) =>
         LogAsync(severity, message, format).GetAwaiter().GetResult();
 
     /// <summary>
@@ -68,7 +69,7 @@ public sealed class MatchaLogger : IDisposable
     /// <param name="format">The string format parameters.</param>
     /// <exception cref="ArgumentException">Thrown if <paramref name="message"/> is empty.</exception>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="message"/> is null.</exception>
-    public async Task LogAsync(LogSeverity severity, string message, params object?[]? format)
+    public async Task LogAsync(LogSeverity severity, [StringSyntax(StringSyntaxAttribute.CompositeFormat)] string message, params object?[]? format)
     {
         ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
 
