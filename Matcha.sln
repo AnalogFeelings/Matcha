@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matcha", "Source\Matcha\Matcha.csproj", "{57E9E9F3-A345-4F4A-8011-17CAC9A09A68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matcha.Example", "Source\Matcha.Example\Matcha.Example.csproj", "{5E22E99E-7F9D-4D7F-ACE6-32CB609C2CCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{57E9E9F3-A345-4F4A-8011-17CAC9A09A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57E9E9F3-A345-4F4A-8011-17CAC9A09A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57E9E9F3-A345-4F4A-8011-17CAC9A09A68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E22E99E-7F9D-4D7F-ACE6-32CB609C2CCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E22E99E-7F9D-4D7F-ACE6-32CB609C2CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E22E99E-7F9D-4D7F-ACE6-32CB609C2CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E22E99E-7F9D-4D7F-ACE6-32CB609C2CCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
