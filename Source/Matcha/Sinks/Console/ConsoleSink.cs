@@ -56,16 +56,25 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
     /// <summary>
     /// Constant array of newline sequences.
     /// </summary>
-    private readonly string[] _newlineArray =
-    [
-        "\n",
-        "\r\n"
-    ];
+    private readonly string[] _newlineArray = [ "\n", "\r\n" ];
 
     /// <summary>
     /// Provides a semaphore to prevent race conditions.
     /// </summary>
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+
+    /// <summary>
+    /// Lower-left corner of a box.
+    /// </summary>
+    private const char _BOX_UPRIGHT = '\u2514';
+    /// <summary>
+    /// Middle-left corner of a box.
+    /// </summary>
+    private const char _BOX_VERTRIGHT = '\u251c';
+    /// <summary>
+    /// Horizontal border of a box.
+    /// </summary>
+    private const char _BOX_HORIZONTAL = '\u2500';
 
     /// <inheritdoc/>
     public async Task WriteLogAsync(LogEntry entry)
@@ -85,16 +94,15 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
                 ConsoleExtensions.Disable();
 
             StringBuilder logHeaderBuilder = new StringBuilder();
-            int logHeaderLength = 0;
+            int logHeaderLength = 1;
         
-            // I think using a char should be faster than a string since no string would
-            // need to be created and initialized, but who knows.
+            // Using a char is faster.
             logHeaderBuilder.Append('[');
 
             if (Config.OutputDate)
             {
                 string date = entry.Time.ToString(Config.DateFormat);
-                string dateColored = date.Pastel("#D3D3D3");
+                string dateColored = date.Pastel(ColorConstants.LIGHT_GRAY);
 
                 logHeaderBuilder.Append(dateColored).Append(' ');
 
@@ -107,10 +115,12 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
 
             logHeaderBuilder.Append(header).Append(']');
 
-            logHeaderLength += data.Header.Length;
+            logHeaderLength += data.Header.Length + 1;
 
-            string logHeader = logHeaderBuilder.ToString().Pastel("#FFFFFF");
-            string newLineHeader = string.Empty;
+            string logHeader = logHeaderBuilder.ToString().Pastel(ColorConstants.WHITE);
+            
+            string newLineHeaderFirst = string.Empty;
+            string newLineHeaderLast = string.Empty;
             
             string formattedContent = string.Format(entry.Content, entry.Format);
             string[] splittedContent = formattedContent.Split(_newlineArray, StringSplitOptions.None);
@@ -120,19 +130,47 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
                     
             if (splittedContent.Length > 1)
             {
-                string dashes = new string('-', logHeaderLength).Pastel("#D3D3D3");
+                newLineHeaderBuilder.Append(_BOX_UPRIGHT).Append(new string(_BOX_HORIZONTAL, logHeaderLength - 1));
 
-                newLineHeaderBuilder.Append('[').Append(dashes).Append(']');
-
-                newLineHeader = newLineHeaderBuilder.ToString().Pastel("#FFFFFF");
+                newLineHeaderLast = newLineHeaderBuilder.ToString().Pastel(ColorConstants.WHITE);
+            }
+            if (splittedContent.Length > 2)
+            {
+                // Only bother initializing middle header if we got more than 2 lines total.
+                newLineHeaderBuilder.Clear();
+                
+                newLineHeaderBuilder.Append(_BOX_VERTRIGHT).Append(new string(_BOX_HORIZONTAL, logHeaderLength - 1));
+                
+                newLineHeaderFirst = newLineHeaderBuilder.ToString().Pastel(ColorConstants.WHITE);
             }
 
             for (int i = 0; i < splittedContent.Length; i++)
             {
                 string contentLine = splittedContent[i];
                 string contentLineColored = contentLine.Pastel(data.TextColor);
-
-                fullBuilder.Append(i != 0 ? newLineHeader : logHeader);
+                
+                if (i == 0)
+                {
+                    fullBuilder.Append(logHeader);
+                }
+                // Are we on the second line?
+                else if (i == 1)
+                {
+                    // Theres only 2 lines, put the end already.
+                    if(splittedContent.Length == 2)
+                        fullBuilder.Append(newLineHeaderLast);
+                    else if(splittedContent.Length > 2)
+                        fullBuilder.Append(newLineHeaderFirst);
+                }
+                else if (i > 1)
+                {
+                    // We are on the last line!
+                    if(i == splittedContent.Length - 1)
+                        fullBuilder.Append(newLineHeaderLast);
+                    else
+                        fullBuilder.Append(newLineHeaderFirst);
+                }
+                
                 fullBuilder.Append(' ').Append(contentLineColored);
                 fullBuilder.Append(Environment.NewLine);
             }
