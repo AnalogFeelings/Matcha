@@ -89,6 +89,11 @@ public sealed class MatchaLogger : IDisposable
 
         foreach (IMatchaSink<SinkConfig> sink in _sinks)
         {
+            if (!sink.Config.Enabled)
+                continue;
+            if ((int)sink.Config.SeverityFilterLevel > (int)severity)
+                continue;
+            
             taskList.Add(sink.WriteLogAsync(entry));
         }
 
