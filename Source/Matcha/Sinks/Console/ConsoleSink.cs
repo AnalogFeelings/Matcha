@@ -36,7 +36,7 @@ using SeverityData = (string Header, string HeaderColor, string TextColor);
 /// <summary>
 /// A simple sink to output logs to the console.
 /// </summary>
-public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
+public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
 {
     /// <inheritdoc/>
     public required ConsoleSinkConfig Config { get; init; }
@@ -196,5 +196,11 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
         _indentBuilder.Append(dashes);
                 
         indentMiddle = _indentBuilder.ToString().Pastel(ColorConstants.WHITE);
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        _semaphore.Dispose();
     }
 }
