@@ -117,7 +117,9 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
             
             if (splittedContent.Length > 1)
             {
-                _indentBuilder.Append(_BOX_UPRIGHT).Append(new string(_BOX_HORIZONTAL, logHeaderLength - 1));
+                _indentBuilder.Append(new string(' ', logHeaderLength - 4));
+                _indentBuilder.Append(_BOX_UPRIGHT);
+                _indentBuilder.Append(new string(_BOX_HORIZONTAL,logHeaderLength - (logHeaderLength - 3)));
 
                 indentLast = _indentBuilder.ToString().Pastel(ColorConstants.WHITE);
             }
@@ -126,7 +128,9 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>
                 // Only bother initializing middle header if we got more than 2 lines total.
                 _indentBuilder.Clear();
                 
-                _indentBuilder.Append(_BOX_VERTRIGHT).Append(new string(_BOX_HORIZONTAL, logHeaderLength - 1));
+                _indentBuilder.Append(new string(' ', logHeaderLength - 4));
+                _indentBuilder.Append(_BOX_VERTRIGHT);
+                _indentBuilder.Append(new string(_BOX_HORIZONTAL,logHeaderLength - (logHeaderLength - 3)));
                 
                 indentMiddle = _indentBuilder.ToString().Pastel(ColorConstants.WHITE);
             }
