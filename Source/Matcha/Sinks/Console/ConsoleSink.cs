@@ -1,4 +1,5 @@
 ﻿#region License Information (MIT)
+
 // Matcha - A simple but neat logging library for .NET.
 // Copyright (C) 2022-2024 Analog Feelings
 // 
@@ -19,6 +20,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 #endregion
 
 using System.Runtime.CompilerServices;
@@ -26,7 +28,6 @@ using System.Text;
 using AnalogFeelings.Matcha.Enums;
 using AnalogFeelings.Matcha.Interfaces;
 using AnalogFeelings.Matcha.Models;
-using Pastel;
 
 namespace AnalogFeelings.Matcha.Sinks.Console;
 
@@ -46,18 +47,18 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
     /// </summary>
     private readonly Dictionary<LogSeverity, SeverityData> _severityDict = new Dictionary<LogSeverity, SeverityData>()
     {
-        [LogSeverity.Debug] = ("DBG", "#D10691", "#C95BA6"),
-        [LogSeverity.Information] = ("INF", "#00FFFF", "#ADD8E6"),
-        [LogSeverity.Success] = ("SCS", "#00FF00", "#90EE90"),
-        [LogSeverity.Warning] = ("WRN", "#FFFF00", "#EEE8AA"),
-        [LogSeverity.Error] = ("ERR", "#FF0000", "#CD5C5C"),
-        [LogSeverity.Fatal] = ("FTL", "#FF8000", "#FFA245")
+        [LogSeverity.Debug] = ("DBG", ColorConstants.PINK, ColorConstants.LIGHT_PINK),
+        [LogSeverity.Information] = ("INF", ColorConstants.CYAN, ColorConstants.LIGHT_BLUE),
+        [LogSeverity.Success] = ("SCS", ColorConstants.GREEN, ColorConstants.LIGHT_GREEN),
+        [LogSeverity.Warning] = ("WRN", ColorConstants.YELLOW, ColorConstants.LIGHT_YELLOW),
+        [LogSeverity.Error] = ("ERR", ColorConstants.RED, ColorConstants.LIGHT_RED),
+        [LogSeverity.Fatal] = ("FTL", ColorConstants.ORANGE, ColorConstants.BROWN)
     };
 
     /// <summary>
     /// Constant array of newline sequences.
     /// </summary>
-    private readonly string[] _newlineArray = [ "\n", "\r\n" ];
+    private readonly string[] _newlineArray = ["\n", "\r\n"];
 
     /// <summary>
     /// Provides a semaphore to prevent race conditions.
@@ -80,36 +81,62 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
 
         try
         {
-            if(Config.UseColors)
-                ConsoleExtensions.Enable();
-            else
-                ConsoleExtensions.Disable();
-            
             int logHeaderLength = 1;
-        
-            // Using a char is faster.
-            _logHeaderBuilder.Append('[');
+
+            if (Config.UseColors)
+            {
+                _logHeaderBuilder.Append(ColorConstants.WHITE);
+                _logHeaderBuilder.Append('[');
+                _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
+            }
+            else
+            {
+                _logHeaderBuilder.Append('[');
+            }
 
             if (Config.OutputDate)
             {
                 string date = entry.Time.ToString(Config.DateFormat);
-                string dateColored = date.Pastel(ColorConstants.LIGHT_GRAY);
 
-                _logHeaderBuilder.Append(dateColored).Append(' ');
+                if (Config.UseColors)
+                {
+                    _logHeaderBuilder.Append(ColorConstants.LIGHT_GRAY);
+                    _logHeaderBuilder.Append(date);
+                    _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
+                }
+                else
+                {
+                    _logHeaderBuilder.Append(date);
+                }
+                
+                _logHeaderBuilder.Append(' ');
 
                 // Account for the space.
                 logHeaderLength += date.Length + 1;
             }
 
             SeverityData data = _severityDict[entry.Severity];
-            string header = data.Header.Pastel(data.HeaderColor);
 
-            _logHeaderBuilder.Append(header).Append(']');
+            if (Config.UseColors)
+            {
+                _logHeaderBuilder.Append(data.HeaderColor);
+                _logHeaderBuilder.Append(data.Header);
+                _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
+                
+                _logHeaderBuilder.Append(ColorConstants.WHITE);
+                _logHeaderBuilder.Append(']');
+                _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
+            }
+            else
+            {
+                _logHeaderBuilder.Append(data.Header);
+                _logHeaderBuilder.Append(']');
+            }
 
             logHeaderLength += data.Header.Length + 1;
 
-            string logHeader = _logHeaderBuilder.ToString().Pastel(ColorConstants.WHITE);
-            
+            string logHeader = _logHeaderBuilder.ToString();
+
             string formattedContent = string.Format(entry.Content, entry.Format);
             string[] splittedContent = formattedContent.Split(_newlineArray, StringSplitOptions.None);
 
@@ -118,8 +145,7 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
             for (int i = 0; i < splittedContent.Length; i++)
             {
                 string contentLine = splittedContent[i];
-                string contentLineColored = contentLine.Pastel(data.TextColor);
-                
+
                 if (i == 0)
                 {
                     _fullBuilder.Append(logHeader);
@@ -128,24 +154,36 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
                 else if (i == 1)
                 {
                     // Theres only 2 lines, put the end already.
-                    if(splittedContent.Length == 2)
+                    if (splittedContent.Length == 2)
                         _fullBuilder.Append(indentLast);
-                    else if(splittedContent.Length > 2)
+                    else if (splittedContent.Length > 2)
                         _fullBuilder.Append(indentMiddle);
                 }
                 else if (i > 1)
                 {
                     // We are on the last line!
-                    if(i == splittedContent.Length - 1)
+                    if (i == splittedContent.Length - 1)
                         _fullBuilder.Append(indentLast);
                     else
                         _fullBuilder.Append(indentMiddle);
                 }
+
+                _fullBuilder.Append(' ');
+
+                if (Config.UseColors)
+                {
+                    _fullBuilder.Append(data.TextColor);
+                    _fullBuilder.Append(contentLine);
+                    _fullBuilder.Append(ColorConstants.ANSI_RESET);
+                }
+                else
+                {
+                    _fullBuilder.Append(contentLine);
+                }
                 
-                _fullBuilder.Append(' ').Append(contentLineColored);
                 _fullBuilder.AppendLine();
             }
-        
+
             Console.Write(_fullBuilder.ToString());
         }
         finally
@@ -153,7 +191,7 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
             _logHeaderBuilder.Clear();
             _fullBuilder.Clear();
             _indentBuilder.Clear();
-            
+
             _semaphore.Release();
         }
     }
@@ -176,26 +214,48 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
         int amountOfDashes = headerLength - (headerLength - 3);
         Span<char> spaces = stackalloc char[amountOfSpaces];
         Span<char> dashes = stackalloc char[amountOfDashes];
-        
+
         spaces.Fill(' ');
         dashes.Fill(_BOX_HORIZONTAL);
-            
-        _indentBuilder.Append(spaces);
-        _indentBuilder.Append(_BOX_UPRIGHT);
-        _indentBuilder.Append(dashes);
 
-        indentLast = _indentBuilder.ToString().Pastel(ColorConstants.WHITE);
+        if (Config.UseColors)
+        {
+            _indentBuilder.Append(ColorConstants.WHITE);
+            _indentBuilder.Append(spaces);
+            _indentBuilder.Append(_BOX_UPRIGHT);
+            _indentBuilder.Append(dashes);
+            _indentBuilder.Append(ColorConstants.ANSI_RESET);
+        }
+        else
+        {
+            _indentBuilder.Append(spaces);
+            _indentBuilder.Append(_BOX_UPRIGHT);
+            _indentBuilder.Append(dashes);
+        }
+
+        indentLast = _indentBuilder.ToString();
 
         if (lineCount <= 2) return;
-        
+
         // Only bother initializing middle header if we got more than 2 lines total.
         _indentBuilder.Clear();
-                
-        _indentBuilder.Append(spaces);
-        _indentBuilder.Append(_BOX_VERTRIGHT);
-        _indentBuilder.Append(dashes);
-                
-        indentMiddle = _indentBuilder.ToString().Pastel(ColorConstants.WHITE);
+
+        if (Config.UseColors)
+        {
+            _indentBuilder.Append(ColorConstants.WHITE);
+            _indentBuilder.Append(spaces);
+            _indentBuilder.Append(_BOX_VERTRIGHT);
+            _indentBuilder.Append(dashes);
+            _indentBuilder.Append(ColorConstants.ANSI_RESET);
+        }
+        else
+        {
+            _indentBuilder.Append(spaces);
+            _indentBuilder.Append(_BOX_VERTRIGHT);
+            _indentBuilder.Append(dashes);
+        }
+
+        indentMiddle = _indentBuilder.ToString();
     }
 
     /// <inheritdoc/>

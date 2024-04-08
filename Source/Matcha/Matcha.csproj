@@ -40,8 +40,4 @@
         <Visible>false</Visible>
       </None>
     </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Pastel" Version="5.0.0" />
-    </ItemGroup>
 </Project>
