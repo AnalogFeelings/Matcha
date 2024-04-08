@@ -35,27 +35,27 @@ public enum LogSeverity
     /// This severity should be filtered on release builds.
     /// </remarks>
     Debug,
-    
+
     /// <summary>
     /// Used to log non-urgent information about the program's execution.
     /// </summary>
     Information,
-    
+
     /// <summary>
     /// Used to log a successful operation's completion.
     /// </summary>
     Success,
-    
+
     /// <summary>
     /// Used to log a potentially dangerous situation.
     /// </summary>
     Warning,
-    
+
     /// <summary>
     /// Used to log an error in the program's execution.
     /// </summary>
     Error,
-    
+
     /// <summary>
     /// Used to log a catastrophic error which cannot be recovered from.
     /// </summary>

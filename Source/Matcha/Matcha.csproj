@@ -27,17 +27,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Include="..\..\Branding\matcha.png">
-        <Pack>True</Pack>
-        <PackagePath></PackagePath>
-        <Link>matcha.png</Link>
-        <Visible>false</Visible>
-      </None>
-      <None Include="..\..\NUGET_README.md">
-        <Pack>True</Pack>
-        <PackagePath></PackagePath>
-        <Link>NUGET_README.md</Link>
-        <Visible>false</Visible>
-      </None>
+        <None Include="..\..\Branding\matcha.png">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+            <Link>matcha.png</Link>
+            <Visible>false</Visible>
+        </None>
+        <None Include="..\..\NUGET_README.md">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+            <Link>NUGET_README.md</Link>
+            <Visible>false</Visible>
+        </None>
     </ItemGroup>
 </Project>

@@ -8,7 +8,7 @@ file static class MainProgram
 {
     private static ConsoleSinkConfig Config;
     private static MatchaLogger Logger;
-    
+
     public static async Task Main(string[] args)
     {
         Config = new ConsoleSinkConfig()
@@ -54,7 +54,7 @@ file static class MainProgram
         await Logger.LogAsync(LogSeverity.Information, "Hey, this is a multi-line message!\nAs you can see, Matcha formats it!\nBe silly!");
         await Logger.LogAsync(LogSeverity.Success, "Another multi-line message!\nBe sillier!! :3");
     }
-    
+
     /// <summary>
     /// Shows off formatting.
     /// </summary>
@@ -70,11 +70,11 @@ file static class MainProgram
     private static async Task ShowOffColorToggling()
     {
         Config.UseColors = false;
-        
+
         await Logger.LogAsync(LogSeverity.Information, "bye bye fancy colors!!");
-        
+
         Config.UseColors = true;
-        
+
         await Logger.LogAsync(LogSeverity.Information, "hello fancy colors!!");
     }
 
@@ -84,11 +84,11 @@ file static class MainProgram
     private static async Task ShowOffDateToggling()
     {
         Config.OutputDate = false;
-        
+
         await Logger.LogAsync(LogSeverity.Information, "bye bye date!!\nthis is so sad");
-        
+
         Config.OutputDate = true;
-        
+
         await Logger.LogAsync(LogSeverity.Information, "hello date!!\nthis is so cool");
     }
 }

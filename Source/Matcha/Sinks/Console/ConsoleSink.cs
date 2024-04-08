@@ -1,5 +1,4 @@
 ﻿#region License Information (MIT)
-
 // Matcha - A simple but neat logging library for .NET.
 // Copyright (C) 2022-2024 Analog Feelings
 // 
@@ -20,7 +19,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
 #endregion
 
 using System.Runtime.CompilerServices;
@@ -108,7 +106,7 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
                 {
                     _logHeaderBuilder.Append(date);
                 }
-                
+
                 _logHeaderBuilder.Append(' ');
 
                 // Account for the space.
@@ -122,7 +120,7 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
                 _logHeaderBuilder.Append(data.HeaderColor);
                 _logHeaderBuilder.Append(data.Header);
                 _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
-                
+
                 _logHeaderBuilder.Append(ColorConstants.WHITE);
                 _logHeaderBuilder.Append(']');
                 _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
@@ -180,7 +178,7 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
                 {
                     _fullBuilder.Append(contentLine);
                 }
-                
+
                 _fullBuilder.AppendLine();
             }
 

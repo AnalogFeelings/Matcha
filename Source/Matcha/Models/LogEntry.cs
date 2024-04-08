@@ -34,17 +34,17 @@ public record LogEntry
     /// The log entry's severity.
     /// </summary>
     public required LogSeverity Severity { get; init; }
-    
+
     /// <summary>
     /// The log entry's message.
     /// </summary>
     public required string Content { get; init; }
-    
+
     /// <summary>
     /// The time the log entry was created at.
     /// </summary>
     public required DateTime Time { get; init; }
-    
+
     /// <summary>
     /// The formatting parameters.
     /// </summary>

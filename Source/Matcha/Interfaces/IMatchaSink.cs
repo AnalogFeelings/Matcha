@@ -38,7 +38,7 @@ public interface IMatchaSink<out T> where T : SinkConfig
     /// The sink's configuration.
     /// </summary>
     public T Config { get; }
-    
+
     /// <summary>
     /// Called when a log entry is ready to be written to the sink.
     /// </summary>

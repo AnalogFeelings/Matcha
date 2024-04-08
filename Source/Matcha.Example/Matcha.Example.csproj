@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Matcha\Matcha.csproj" />
+        <ProjectReference Include="..\Matcha\Matcha.csproj"/>
     </ItemGroup>
 
 </Project>

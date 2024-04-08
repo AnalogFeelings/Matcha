@@ -92,7 +92,7 @@ public sealed class MatchaLogger : IDisposable
         for (int i = 0; i < _sinks.Length; i++)
         {
             IMatchaSink<SinkConfig> sink = _sinks[i];
-            
+
             if (!sink.Config.Enabled)
                 continue;
             if ((int)sink.Config.SeverityFilterLevel > (int)severity)
@@ -107,7 +107,7 @@ public sealed class MatchaLogger : IDisposable
 
         await Task.WhenAll(taskArray);
     }
-    
+
     /// <inheritdoc/>
     public void Dispose()
     {
