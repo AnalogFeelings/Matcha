@@ -64,7 +64,6 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
     // Reduces GC pressure.
-    private readonly StringBuilder _logHeaderBuilder = new StringBuilder();
     private readonly StringBuilder _fullBuilder = new StringBuilder();
     private readonly StringBuilder _indentBuilder = new StringBuilder();
 
@@ -83,13 +82,13 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
 
             if (Config.UseColors)
             {
-                _logHeaderBuilder.Append(ColorConstants.WHITE);
-                _logHeaderBuilder.Append('[');
-                _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
+                _fullBuilder.Append(ColorConstants.WHITE);
+                _fullBuilder.Append('[');
+                _fullBuilder.Append(ColorConstants.ANSI_RESET);
             }
             else
             {
-                _logHeaderBuilder.Append('[');
+                _fullBuilder.Append('[');
             }
 
             if (Config.OutputDate)
@@ -98,16 +97,16 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
 
                 if (Config.UseColors)
                 {
-                    _logHeaderBuilder.Append(ColorConstants.LIGHT_GRAY);
-                    _logHeaderBuilder.Append(date);
-                    _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
+                    _fullBuilder.Append(ColorConstants.LIGHT_GRAY);
+                    _fullBuilder.Append(date);
+                    _fullBuilder.Append(ColorConstants.ANSI_RESET);
                 }
                 else
                 {
-                    _logHeaderBuilder.Append(date);
+                    _fullBuilder.Append(date);
                 }
 
-                _logHeaderBuilder.Append(' ');
+                _fullBuilder.Append(' ');
 
                 // Account for the space.
                 logHeaderLength += date.Length + 1;
@@ -117,23 +116,21 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
 
             if (Config.UseColors)
             {
-                _logHeaderBuilder.Append(data.HeaderColor);
-                _logHeaderBuilder.Append(data.Header);
-                _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
+                _fullBuilder.Append(data.HeaderColor);
+                _fullBuilder.Append(data.Header);
+                _fullBuilder.Append(ColorConstants.ANSI_RESET);
 
-                _logHeaderBuilder.Append(ColorConstants.WHITE);
-                _logHeaderBuilder.Append(']');
-                _logHeaderBuilder.Append(ColorConstants.ANSI_RESET);
+                _fullBuilder.Append(ColorConstants.WHITE);
+                _fullBuilder.Append(']');
+                _fullBuilder.Append(ColorConstants.ANSI_RESET);
             }
             else
             {
-                _logHeaderBuilder.Append(data.Header);
-                _logHeaderBuilder.Append(']');
+                _fullBuilder.Append(data.Header);
+                _fullBuilder.Append(']');
             }
 
             logHeaderLength += data.Header.Length + 1;
-
-            string logHeader = _logHeaderBuilder.ToString();
 
             string formattedContent = string.Format(entry.Content, entry.Format);
             string[] splittedContent = formattedContent.Split(_newlineArray, StringSplitOptions.None);
@@ -144,12 +141,8 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
             {
                 string contentLine = splittedContent[i];
 
-                if (i == 0)
-                {
-                    _fullBuilder.Append(logHeader);
-                }
                 // Are we on the second line?
-                else if (i == 1)
+                if (i == 1)
                 {
                     // Theres only 2 lines, put the end already.
                     if (splittedContent.Length == 2)
@@ -186,7 +179,6 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
         }
         finally
         {
-            _logHeaderBuilder.Clear();
             _fullBuilder.Clear();
             _indentBuilder.Clear();
 
