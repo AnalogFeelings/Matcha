@@ -77,16 +77,16 @@ public sealed class MatchaLogger : IDisposable
             return;
 
         object?[] formatArray = format ?? Array.Empty<object>();
+        string formattedMessage = string.Format(message, formatArray);
 
         // Check if at least one sink is enabled or usable.
         bool passedTests = false;
         Task[] taskArray = new Task[_sinks.Length];
         LogEntry entry = new LogEntry()
         {
-            Content = message,
+            Content = formattedMessage,
             Severity = severity,
-            Time = DateTime.Now,
-            Format = formatArray
+            Time = DateTime.Now
         };
 
         for (int i = 0; i < _sinks.Length; i++)

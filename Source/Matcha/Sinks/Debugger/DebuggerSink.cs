@@ -84,8 +84,7 @@ public class DebuggerSink : IMatchaSink<DebuggerSinkConfig>
             _fullBuilder.Append(_severityDict[entry.Severity]);
             _fullBuilder.Append(']');
             
-            string formattedContent = string.Format(entry.Content, entry.Format);
-            string[] splittedContent = formattedContent.Split(SharedConstants.NewlineArray, StringSplitOptions.None);
+            string[] splittedContent = entry.Content.Split(SharedConstants.NewlineArray, StringSplitOptions.None);
             
             GenerateIndents(splittedContent.Length, _fullBuilder.Length, out string indentMiddle, out string indentLast);
             

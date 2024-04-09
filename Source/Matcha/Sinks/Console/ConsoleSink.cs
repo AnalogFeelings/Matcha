@@ -123,8 +123,7 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
 
             logHeaderLength += data.Header.Length + 1;
 
-            string formattedContent = string.Format(entry.Content, entry.Format);
-            string[] splittedContent = formattedContent.Split(SharedConstants.NewlineArray, StringSplitOptions.None);
+            string[] splittedContent = entry.Content.Split(SharedConstants.NewlineArray, StringSplitOptions.None);
 
             GenerateIndents(splittedContent.Length, logHeaderLength, out string indentMiddle, out string indentLast);
 

@@ -44,9 +44,4 @@ public record LogEntry
     /// The time the log entry was created at.
     /// </summary>
     public required DateTime Time { get; init; }
-
-    /// <summary>
-    /// The formatting parameters.
-    /// </summary>
-    public required object?[] Format { get; init; }
 }
