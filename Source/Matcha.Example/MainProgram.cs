@@ -1,12 +1,14 @@
 ﻿using AnalogFeelings.Matcha;
 using AnalogFeelings.Matcha.Enums;
 using AnalogFeelings.Matcha.Sinks.Console;
+using AnalogFeelings.Matcha.Sinks.Debugger;
 
 namespace Matcha.Example;
 
 file static class MainProgram
 {
     private static ConsoleSinkConfig _Config = default!;
+    private static DebuggerSinkConfig _ConfigDebug = default!;
     private static MatchaLogger _Logger = default!;
 
     public static async Task Main(string[] args)
@@ -14,15 +16,26 @@ file static class MainProgram
         _Config = new ConsoleSinkConfig()
         {
 #if DEBUG
-            SeverityFilterLevel = LogSeverity.Debug,
+            SeverityFilterLevel = LogSeverity.Debug
 #else
-            SeverityFilterLevel = LogSeverity.Information,
+            SeverityFilterLevel = LogSeverity.Information
 #endif
         };
-        _Logger = new MatchaLogger(new ConsoleSink()
+        _ConfigDebug = new DebuggerSinkConfig()
+        {
+            SeverityFilterLevel = LogSeverity.Debug
+        };
+
+        ConsoleSink consoleSink = new ConsoleSink()
         {
             Config = _Config
-        });
+        };
+        DebuggerSink debuggerSink = new DebuggerSink()
+        {
+            Config = _ConfigDebug
+        };
+        
+        _Logger = new MatchaLogger(consoleSink, debuggerSink);
 
         await ShowOffSeverities();
         await ShowOffMultiLine();
@@ -84,10 +97,12 @@ file static class MainProgram
     private static async Task ShowOffDateToggling()
     {
         _Config.OutputDate = false;
+        _ConfigDebug.OutputDate = false;
 
         await _Logger.LogAsync(LogSeverity.Information, "bye bye date!!\nthis is so sad");
 
         _Config.OutputDate = true;
+        _ConfigDebug.OutputDate = true;
 
         await _Logger.LogAsync(LogSeverity.Information, "hello date!!\nthis is so cool");
     }

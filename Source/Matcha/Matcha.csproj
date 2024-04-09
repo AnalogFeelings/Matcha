@@ -24,6 +24,7 @@
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <RootNamespace>AnalogFeelings.Matcha</RootNamespace>
         <AssemblyName>AnalogFeelings.Matcha</AssemblyName>
+        <PackageReleaseNotes>Complete rewrite of the library, with new features.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

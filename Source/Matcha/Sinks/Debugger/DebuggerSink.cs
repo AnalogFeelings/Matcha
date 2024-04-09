@@ -21,43 +21,43 @@
 // SOFTWARE.
 #endregion
 
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using AnalogFeelings.Matcha.Enums;
 using AnalogFeelings.Matcha.Interfaces;
 using AnalogFeelings.Matcha.Models;
 
-namespace AnalogFeelings.Matcha.Sinks.Console;
+namespace AnalogFeelings.Matcha.Sinks.Debugger;
 
-using Console = System.Console;
-using SeverityData = (string Header, string HeaderColor, string TextColor);
+using Debugger = System.Diagnostics.Debugger;
 
 /// <summary>
-/// A simple sink to output logs to the console.
+/// A simple sink to output logs to the IDE debug output.
 /// </summary>
-public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
+public class DebuggerSink : IMatchaSink<DebuggerSinkConfig>
 {
     /// <inheritdoc/>
-    public required ConsoleSinkConfig Config { get; init; }
-
+    public required DebuggerSinkConfig Config { get; init; }
+    
     /// <summary>
-    /// Dictionary to quickly convert a severity to a string and its color.
+    /// Dictionary to quickly convert a severity to its string representation.
     /// </summary>
-    private readonly Dictionary<LogSeverity, SeverityData> _severityDict = new Dictionary<LogSeverity, SeverityData>()
+    private readonly Dictionary<LogSeverity, string> _severityDict = new Dictionary<LogSeverity, string>()
     {
-        [LogSeverity.Debug] = ("DBG", ColorConstants.PINK, ColorConstants.LIGHT_PINK),
-        [LogSeverity.Information] = ("INF", ColorConstants.CYAN, ColorConstants.LIGHT_BLUE),
-        [LogSeverity.Success] = ("SCS", ColorConstants.GREEN, ColorConstants.LIGHT_GREEN),
-        [LogSeverity.Warning] = ("WRN", ColorConstants.YELLOW, ColorConstants.LIGHT_YELLOW),
-        [LogSeverity.Error] = ("ERR", ColorConstants.RED, ColorConstants.LIGHT_RED),
-        [LogSeverity.Fatal] = ("FTL", ColorConstants.ORANGE, ColorConstants.BROWN)
+        [LogSeverity.Debug] = "DBG",
+        [LogSeverity.Information] = "INF",
+        [LogSeverity.Success] = "SCS",
+        [LogSeverity.Warning] = "WRN",
+        [LogSeverity.Error] = "ERR",
+        [LogSeverity.Fatal] = "FTL"
     };
-
+    
     /// <summary>
     /// Provides a semaphore to prevent race conditions.
     /// </summary>
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-
+    
     // Reduces GC pressure.
     private readonly StringBuilder _fullBuilder = new StringBuilder();
     private readonly StringBuilder _indentBuilder = new StringBuilder();
@@ -65,69 +65,30 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
     /// <inheritdoc/>
     public async Task WriteLogAsync(LogEntry entry)
     {
+        if (!Debugger.IsAttached) return;
+        
         await _semaphore.WaitAsync();
 
         try
         {
-            int logHeaderLength = 1;
-
-            if (Config.UseColors)
-            {
-                _fullBuilder.Append(ColorConstants.WHITE);
-                _fullBuilder.Append('[');
-                _fullBuilder.Append(ColorConstants.ANSI_RESET);
-            }
-            else
-            {
-                _fullBuilder.Append('[');
-            }
-
+            _fullBuilder.Append('[');
+            
             if (Config.OutputDate)
             {
                 string date = entry.Time.ToString(Config.DateFormat);
 
-                if (Config.UseColors)
-                {
-                    _fullBuilder.Append(ColorConstants.LIGHT_GRAY);
-                    _fullBuilder.Append(date);
-                    _fullBuilder.Append(ColorConstants.ANSI_RESET);
-                }
-                else
-                {
-                    _fullBuilder.Append(date);
-                }
-
+                _fullBuilder.Append(date);
                 _fullBuilder.Append(' ');
-
-                // Account for the space.
-                logHeaderLength += date.Length + 1;
             }
-
-            SeverityData data = _severityDict[entry.Severity];
-
-            if (Config.UseColors)
-            {
-                _fullBuilder.Append(data.HeaderColor);
-                _fullBuilder.Append(data.Header);
-                _fullBuilder.Append(ColorConstants.ANSI_RESET);
-
-                _fullBuilder.Append(ColorConstants.WHITE);
-                _fullBuilder.Append(']');
-                _fullBuilder.Append(ColorConstants.ANSI_RESET);
-            }
-            else
-            {
-                _fullBuilder.Append(data.Header);
-                _fullBuilder.Append(']');
-            }
-
-            logHeaderLength += data.Header.Length + 1;
-
+            
+            _fullBuilder.Append(_severityDict[entry.Severity]);
+            _fullBuilder.Append(']');
+            
             string formattedContent = string.Format(entry.Content, entry.Format);
             string[] splittedContent = formattedContent.Split(SharedConstants.NewlineArray, StringSplitOptions.None);
-
-            GenerateIndents(splittedContent.Length, logHeaderLength, out string indentMiddle, out string indentLast);
-
+            
+            GenerateIndents(splittedContent.Length, _fullBuilder.Length, out string indentMiddle, out string indentLast);
+            
             for (int i = 0; i < splittedContent.Length; i++)
             {
                 string contentLine = splittedContent[i];
@@ -151,32 +112,21 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
                 }
 
                 _fullBuilder.Append(' ');
-
-                if (Config.UseColors)
-                {
-                    _fullBuilder.Append(data.TextColor);
-                    _fullBuilder.Append(contentLine);
-                    _fullBuilder.Append(ColorConstants.ANSI_RESET);
-                }
-                else
-                {
-                    _fullBuilder.Append(contentLine);
-                }
-
+                _fullBuilder.Append(contentLine);
                 _fullBuilder.AppendLine();
             }
-
-            Console.Write(_fullBuilder.ToString());
+            
+            Trace.Write(_fullBuilder.ToString());
         }
         finally
         {
             _fullBuilder.Clear();
             _indentBuilder.Clear();
-
+            
             _semaphore.Release();
         }
     }
-
+    
     /// <summary>
     /// Generates the indentation strings.
     /// </summary>
@@ -199,20 +149,9 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
         spaces.Fill(' ');
         dashes.Fill(SharedConstants.BOX_HORIZONTAL);
 
-        if (Config.UseColors)
-        {
-            _indentBuilder.Append(ColorConstants.WHITE);
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_UPRIGHT);
-            _indentBuilder.Append(dashes);
-            _indentBuilder.Append(ColorConstants.ANSI_RESET);
-        }
-        else
-        {
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_UPRIGHT);
-            _indentBuilder.Append(dashes);
-        }
+        _indentBuilder.Append(spaces);
+        _indentBuilder.Append(SharedConstants.BOX_UPRIGHT);
+        _indentBuilder.Append(dashes);
 
         indentLast = _indentBuilder.ToString();
 
@@ -221,27 +160,10 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
         // Only bother initializing middle header if we got more than 2 lines total.
         _indentBuilder.Clear();
 
-        if (Config.UseColors)
-        {
-            _indentBuilder.Append(ColorConstants.WHITE);
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_VERTRIGHT);
-            _indentBuilder.Append(dashes);
-            _indentBuilder.Append(ColorConstants.ANSI_RESET);
-        }
-        else
-        {
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_VERTRIGHT);
-            _indentBuilder.Append(dashes);
-        }
+        _indentBuilder.Append(spaces);
+        _indentBuilder.Append(SharedConstants.BOX_VERTRIGHT);
+        _indentBuilder.Append(dashes);
 
         indentMiddle = _indentBuilder.ToString();
-    }
-
-    /// <inheritdoc/>
-    public void Dispose()
-    {
-        _semaphore.Dispose();
     }
 }
