@@ -24,7 +24,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using AnalogFeelings.Matcha.Enums;
 using AnalogFeelings.Matcha.Interfaces;
 using AnalogFeelings.Matcha.Models;
 
@@ -41,19 +40,6 @@ public class DebuggerSink : IMatchaSink<DebuggerSinkConfig>
     public required DebuggerSinkConfig Config { get; init; }
     
     /// <summary>
-    /// Dictionary to quickly convert a severity to its string representation.
-    /// </summary>
-    private readonly Dictionary<LogSeverity, string> _severityDict = new Dictionary<LogSeverity, string>()
-    {
-        [LogSeverity.Debug] = "DBG",
-        [LogSeverity.Information] = "INF",
-        [LogSeverity.Success] = "SCS",
-        [LogSeverity.Warning] = "WRN",
-        [LogSeverity.Error] = "ERR",
-        [LogSeverity.Fatal] = "FTL"
-    };
-    
-    /// <summary>
     /// Provides a semaphore to prevent race conditions.
     /// </summary>
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
@@ -61,6 +47,12 @@ public class DebuggerSink : IMatchaSink<DebuggerSinkConfig>
     // Reduces GC pressure.
     private readonly StringBuilder _fullBuilder = new StringBuilder();
     private readonly StringBuilder _indentBuilder = new StringBuilder();
+
+    /// <inheritdoc/>
+    public void InitializeSink()
+    {
+        return;
+    }
 
     /// <inheritdoc/>
     public async Task WriteLogAsync(LogEntry entry)
@@ -81,7 +73,7 @@ public class DebuggerSink : IMatchaSink<DebuggerSinkConfig>
                 _fullBuilder.Append(' ');
             }
             
-            _fullBuilder.Append(_severityDict[entry.Severity]);
+            _fullBuilder.Append(SharedConstants.SeverityDictionary[entry.Severity]);
             _fullBuilder.Append(']');
             
             string[] splittedContent = entry.Content.Split(SharedConstants.NewlineArray, StringSplitOptions.None);

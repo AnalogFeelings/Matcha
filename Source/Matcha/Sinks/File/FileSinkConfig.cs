@@ -21,45 +21,42 @@
 // SOFTWARE.
 #endregion
 
-using AnalogFeelings.Matcha.Enums;
+using AnalogFeelings.Matcha.Models;
+using System.Diagnostics.CodeAnalysis;
 
-namespace AnalogFeelings.Matcha;
+namespace AnalogFeelings.Matcha.Sinks.File;
 
 /// <summary>
-/// Contains shared constants used by the built-in sinks.
+/// Contains config values for <see cref="FileSink"/>.
 /// </summary>
-internal static class SharedConstants
+public record FileSinkConfig : SinkConfig
 {
     /// <summary>
-    /// Constant array of newline sequences.
+    /// The format to use when outputting the date to the file.
     /// </summary>
-    public static readonly string[] NewlineArray = ["\n", "\r\n"];
-    
+    [StringSyntax(StringSyntaxAttribute.DateTimeFormat)]
+    public string DateFormat = "g";
+
     /// <summary>
-    /// Box drawing character in an "L" shape.
+    /// The format to use when creating the output file.
     /// </summary>
-    public const char BOX_UPRIGHT = '\u2514';
-    
+    [StringSyntax(StringSyntaxAttribute.DateTimeFormat)]
+    public string FileNameFormat = "yyy-MM-dd";
+
     /// <summary>
-    /// Box drawing character in a sideways "T" shape.
+    /// The path of the output file.
     /// </summary>
-    public const char BOX_VERTRIGHT = '\u251c';
-    
+    public string FilePath = "./Logs/";
+
     /// <summary>
-    /// Box drawing character in a "-" shape.
+    /// Specifies if the date should be output to the file.
     /// </summary>
-    public const char BOX_HORIZONTAL = '\u2500';
-    
+    public bool OutputDate = true;
+
     /// <summary>
-    /// Dictionary to quickly convert a severity to its string representation.
+    /// Specifies if the file should be overwritten if it already exists.
+    /// <para/>
+    /// The default mode will open the file and append to it.
     /// </summary>
-    public static readonly Dictionary<LogSeverity, string> SeverityDictionary = new Dictionary<LogSeverity, string>()
-    {
-        [LogSeverity.Debug] = "DBG",
-        [LogSeverity.Information] = "INF",
-        [LogSeverity.Success] = "SCS",
-        [LogSeverity.Warning] = "WRN",
-        [LogSeverity.Error] = "ERR",
-        [LogSeverity.Fatal] = "FTL"
-    };
+    public bool Overwrite = false;
 }

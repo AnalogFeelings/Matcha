@@ -2,18 +2,20 @@
 using AnalogFeelings.Matcha.Enums;
 using AnalogFeelings.Matcha.Sinks.Console;
 using AnalogFeelings.Matcha.Sinks.Debugger;
+using AnalogFeelings.Matcha.Sinks.File;
 
 namespace Matcha.Example;
 
 file static class MainProgram
 {
-    private static ConsoleSinkConfig _Config = default!;
-    private static DebuggerSinkConfig _ConfigDebug = default!;
-    private static MatchaLogger _Logger = default!;
+    private static ConsoleSinkConfig _config = default!;
+    private static DebuggerSinkConfig _configDebug = default!;
+    private static FileSinkConfig _configFile = default!;
+    private static MatchaLogger _logger = default!;
 
     public static async Task Main(string[] args)
     {
-        _Config = new ConsoleSinkConfig()
+        _config = new ConsoleSinkConfig()
         {
 #if DEBUG
             SeverityFilterLevel = LogSeverity.Debug
@@ -21,21 +23,34 @@ file static class MainProgram
             SeverityFilterLevel = LogSeverity.Information
 #endif
         };
-        _ConfigDebug = new DebuggerSinkConfig()
+        _configDebug = new DebuggerSinkConfig()
         {
             SeverityFilterLevel = LogSeverity.Debug
+        };
+        _configFile = new FileSinkConfig()
+        {
+#if DEBUG
+            SeverityFilterLevel = LogSeverity.Debug,
+#else
+            SeverityFilterLevel = LogSeverity.Information,
+#endif
+            Overwrite = true
         };
 
         ConsoleSink consoleSink = new ConsoleSink()
         {
-            Config = _Config
+            Config = _config
         };
         DebuggerSink debuggerSink = new DebuggerSink()
         {
-            Config = _ConfigDebug
+            Config = _configDebug
+        };
+        FileSink fileSink = new FileSink()
+        {
+            Config = _configFile
         };
         
-        _Logger = new MatchaLogger(consoleSink, debuggerSink);
+        _logger = new MatchaLogger(consoleSink, debuggerSink, fileSink);
 
         await ShowOffSeverities();
         await ShowOffMultiLine();
@@ -51,12 +66,12 @@ file static class MainProgram
     /// </summary>
     private static async Task ShowOffSeverities()
     {
-        await _Logger.LogAsync(LogSeverity.Debug, "Hey, this is invisible in release mode!");
-        await _Logger.LogAsync(LogSeverity.Information, "Hey, this is an information message!");
-        await _Logger.LogAsync(LogSeverity.Success, "Hey, this is a success message!");
-        await _Logger.LogAsync(LogSeverity.Warning, "Hey, this is a warning message!");
-        await _Logger.LogAsync(LogSeverity.Error, "Hey, this is an error message!");
-        await _Logger.LogAsync(LogSeverity.Fatal, "Hey, this is a fatal message!");
+        await _logger.LogAsync(LogSeverity.Debug, "Hey, this is invisible in release mode!");
+        await _logger.LogAsync(LogSeverity.Information, "Hey, this is an information message!");
+        await _logger.LogAsync(LogSeverity.Success, "Hey, this is a success message!");
+        await _logger.LogAsync(LogSeverity.Warning, "Hey, this is a warning message!");
+        await _logger.LogAsync(LogSeverity.Error, "Hey, this is an error message!");
+        await _logger.LogAsync(LogSeverity.Fatal, "Hey, this is a fatal message!");
     }
 
     /// <summary>
@@ -64,8 +79,8 @@ file static class MainProgram
     /// </summary>
     private static async Task ShowOffMultiLine()
     {
-        await _Logger.LogAsync(LogSeverity.Information, "Hey, this is a multi-line message!\nAs you can see, Matcha formats it!\nBe silly!");
-        await _Logger.LogAsync(LogSeverity.Success, "Another multi-line message!\nBe sillier!! :3");
+        await _logger.LogAsync(LogSeverity.Information, "Hey, this is a multi-line message!\nAs you can see, Matcha formats it!\nBe silly!");
+        await _logger.LogAsync(LogSeverity.Success, "Another multi-line message!\nBe sillier!! :3");
     }
 
     /// <summary>
@@ -73,8 +88,8 @@ file static class MainProgram
     /// </summary>
     private static async Task ShowOffFormatting()
     {
-        await _Logger.LogAsync(LogSeverity.Information, "We support formatting too! Here: {0}", int.MaxValue);
-        await _Logger.LogAsync(LogSeverity.Information, "We support multiline formatting too! Here: {0}\nAnd here! {1}", ulong.MaxValue, ushort.MaxValue);
+        await _logger.LogAsync(LogSeverity.Information, "We support formatting too! Here: {0}", int.MaxValue);
+        await _logger.LogAsync(LogSeverity.Information, "We support multiline formatting too! Here: {0}\nAnd here! {1}", ulong.MaxValue, ushort.MaxValue);
     }
 
     /// <summary>
@@ -82,13 +97,13 @@ file static class MainProgram
     /// </summary>
     private static async Task ShowOffColorToggling()
     {
-        _Config.UseColors = false;
+        _config.UseColors = false;
 
-        await _Logger.LogAsync(LogSeverity.Information, "bye bye fancy colors!!");
+        await _logger.LogAsync(LogSeverity.Information, "bye bye fancy colors!!");
 
-        _Config.UseColors = true;
+        _config.UseColors = true;
 
-        await _Logger.LogAsync(LogSeverity.Information, "hello fancy colors!!");
+        await _logger.LogAsync(LogSeverity.Information, "hello fancy colors!!");
     }
 
     /// <summary>
@@ -96,14 +111,16 @@ file static class MainProgram
     /// </summary>
     private static async Task ShowOffDateToggling()
     {
-        _Config.OutputDate = false;
-        _ConfigDebug.OutputDate = false;
+        _config.OutputDate = false;
+        _configDebug.OutputDate = false;
+        _configFile.OutputDate = false;
 
-        await _Logger.LogAsync(LogSeverity.Information, "bye bye date!!\nthis is so sad");
+        await _logger.LogAsync(LogSeverity.Information, "bye bye date!!\nthis is so sad");
 
-        _Config.OutputDate = true;
-        _ConfigDebug.OutputDate = true;
+        _config.OutputDate = true;
+        _configDebug.OutputDate = true;
+        _configFile.OutputDate = true;
 
-        await _Logger.LogAsync(LogSeverity.Information, "hello date!!\nthis is so cool");
+        await _logger.LogAsync(LogSeverity.Information, "hello date!!\nthis is so cool");
     }
 }

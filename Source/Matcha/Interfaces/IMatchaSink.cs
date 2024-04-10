@@ -40,6 +40,11 @@ public interface IMatchaSink<out T> where T : SinkConfig
     public T Config { get; }
 
     /// <summary>
+    /// Called when a sink is being initialized.
+    /// </summary>
+    public void InitializeSink();
+
+    /// <summary>
     /// Called when a log entry is ready to be written to the sink.
     /// </summary>
     /// <param name="entry">The target log entry.</param>

@@ -32,13 +32,13 @@ namespace AnalogFeelings.Matcha.Sinks.Debugger;
 public record DebuggerSinkConfig : SinkConfig
 {
     /// <summary>
-    /// The format to use when outputting the date to the console.
+    /// The format to use when outputting the date to the debug output.
     /// </summary>
     [StringSyntax(StringSyntaxAttribute.DateTimeFormat)]
     public string DateFormat = "g";
 
     /// <summary>
-    /// Specifies if the date should be output to the console.
+    /// Specifies if the date should be output to the debug output.
     /// </summary>
     public bool OutputDate = true;
 }

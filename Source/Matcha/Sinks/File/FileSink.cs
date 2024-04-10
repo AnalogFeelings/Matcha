@@ -23,116 +23,87 @@
 
 using System.Runtime.CompilerServices;
 using System.Text;
-using AnalogFeelings.Matcha.Enums;
 using AnalogFeelings.Matcha.Interfaces;
 using AnalogFeelings.Matcha.Models;
 
-namespace AnalogFeelings.Matcha.Sinks.Console;
+namespace AnalogFeelings.Matcha.Sinks.File;
 
-using Console = System.Console;
-using SeverityData = (string Header, string HeaderColor, string TextColor);
+using File = System.IO.File;
 
 /// <summary>
-/// A simple sink to output logs to the console.
+/// A simple sink to output logs to a file in the system.
 /// </summary>
-public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
+public class FileSink : IMatchaSink<FileSinkConfig>, IDisposable
 {
     /// <inheritdoc/>
-    public required ConsoleSinkConfig Config { get; init; }
-
+    public required FileSinkConfig Config { get; init; }
+    
     /// <summary>
-    /// Dictionary to quickly convert a severity to a string and its color.
+    /// The writer for the output file.
     /// </summary>
-    private readonly Dictionary<LogSeverity, SeverityData> _severityDict = new Dictionary<LogSeverity, SeverityData>()
-    {
-        [LogSeverity.Debug] = ("DBG", ColorConstants.PINK, ColorConstants.LIGHT_PINK),
-        [LogSeverity.Information] = ("INF", ColorConstants.CYAN, ColorConstants.LIGHT_BLUE),
-        [LogSeverity.Success] = ("SCS", ColorConstants.GREEN, ColorConstants.LIGHT_GREEN),
-        [LogSeverity.Warning] = ("WRN", ColorConstants.YELLOW, ColorConstants.LIGHT_YELLOW),
-        [LogSeverity.Error] = ("ERR", ColorConstants.RED, ColorConstants.LIGHT_RED),
-        [LogSeverity.Fatal] = ("FTL", ColorConstants.ORANGE, ColorConstants.BROWN)
-    };
-
+    private StreamWriter? _writer = null;
+    
     /// <summary>
     /// Provides a semaphore to prevent race conditions.
     /// </summary>
     private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-
+    
     // Reduces GC pressure.
     private readonly StringBuilder _fullBuilder = new StringBuilder();
     private readonly StringBuilder _indentBuilder = new StringBuilder();
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Initializes the file stream writer.
+    /// </summary>
     public void InitializeSink()
     {
-        return;
+        string logFileName = DateTime.Now.ToString(Config.FileNameFormat) + ".txt";
+        string logFilePath = Path.Combine(Config.FilePath, SanitizeFileName(logFileName));
+        FileMode logFileMode = FileMode.Append;
+
+        try
+        {
+            if (!Directory.Exists(Config.FilePath))
+                Directory.CreateDirectory(Config.FilePath);
+
+            if (Config.Overwrite)
+                logFileMode = FileMode.Create;
+
+            _writer = new StreamWriter(File.Open(logFilePath, logFileMode, FileAccess.Write, FileShare.Read));
+        }
+        catch (Exception e)
+        {
+            // Ignored
+        }
     }
 
     /// <inheritdoc/>
     public async Task WriteLogAsync(LogEntry entry)
     {
+        if (_writer == null)
+            return;
+        
         await _semaphore.WaitAsync();
 
         try
         {
-            int logHeaderLength = 1;
-
-            if (Config.UseColors)
-            {
-                _fullBuilder.Append(ColorConstants.WHITE);
-                _fullBuilder.Append('[');
-                _fullBuilder.Append(ColorConstants.ANSI_RESET);
-            }
-            else
-            {
-                _fullBuilder.Append('[');
-            }
-
+            _fullBuilder.Append('[');
+            
             if (Config.OutputDate)
             {
                 string date = entry.Time.ToString(Config.DateFormat);
 
-                if (Config.UseColors)
-                {
-                    _fullBuilder.Append(ColorConstants.LIGHT_GRAY);
-                    _fullBuilder.Append(date);
-                    _fullBuilder.Append(ColorConstants.ANSI_RESET);
-                }
-                else
-                {
-                    _fullBuilder.Append(date);
-                }
-
+                _fullBuilder.Append(date);
                 _fullBuilder.Append(' ');
-
-                // Account for the space.
-                logHeaderLength += date.Length + 1;
             }
-
-            SeverityData data = _severityDict[entry.Severity];
-
-            if (Config.UseColors)
-            {
-                _fullBuilder.Append(data.HeaderColor);
-                _fullBuilder.Append(data.Header);
-                _fullBuilder.Append(ColorConstants.ANSI_RESET);
-
-                _fullBuilder.Append(ColorConstants.WHITE);
-                _fullBuilder.Append(']');
-                _fullBuilder.Append(ColorConstants.ANSI_RESET);
-            }
-            else
-            {
-                _fullBuilder.Append(data.Header);
-                _fullBuilder.Append(']');
-            }
-
-            logHeaderLength += data.Header.Length + 1;
-
+            
+            _fullBuilder.Append(SharedConstants.SeverityDictionary[entry.Severity]);
+            _fullBuilder.Append(']');
+            
             string[] splittedContent = entry.Content.Split(SharedConstants.NewlineArray, StringSplitOptions.None);
-
-            GenerateIndents(splittedContent.Length, logHeaderLength, out string indentMiddle, out string indentLast);
-
+            
+            GenerateIndents(splittedContent.Length, _fullBuilder.Length, out string indentMiddle, out string indentLast);
+            
             for (int i = 0; i < splittedContent.Length; i++)
             {
                 string contentLine = splittedContent[i];
@@ -156,32 +127,22 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
                 }
 
                 _fullBuilder.Append(' ');
-
-                if (Config.UseColors)
-                {
-                    _fullBuilder.Append(data.TextColor);
-                    _fullBuilder.Append(contentLine);
-                    _fullBuilder.Append(ColorConstants.ANSI_RESET);
-                }
-                else
-                {
-                    _fullBuilder.Append(contentLine);
-                }
-
+                _fullBuilder.Append(contentLine);
                 _fullBuilder.AppendLine();
             }
-
-            Console.Write(_fullBuilder.ToString());
+            
+            await _writer.WriteAsync(_fullBuilder.ToString());
+            await _writer.FlushAsync();
         }
         finally
         {
             _fullBuilder.Clear();
             _indentBuilder.Clear();
-
+            
             _semaphore.Release();
         }
     }
-
+    
     /// <summary>
     /// Generates the indentation strings.
     /// </summary>
@@ -204,20 +165,9 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
         spaces.Fill(' ');
         dashes.Fill(SharedConstants.BOX_HORIZONTAL);
 
-        if (Config.UseColors)
-        {
-            _indentBuilder.Append(ColorConstants.WHITE);
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_UPRIGHT);
-            _indentBuilder.Append(dashes);
-            _indentBuilder.Append(ColorConstants.ANSI_RESET);
-        }
-        else
-        {
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_UPRIGHT);
-            _indentBuilder.Append(dashes);
-        }
+        _indentBuilder.Append(spaces);
+        _indentBuilder.Append(SharedConstants.BOX_UPRIGHT);
+        _indentBuilder.Append(dashes);
 
         indentLast = _indentBuilder.ToString();
 
@@ -226,27 +176,31 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
         // Only bother initializing middle header if we got more than 2 lines total.
         _indentBuilder.Clear();
 
-        if (Config.UseColors)
-        {
-            _indentBuilder.Append(ColorConstants.WHITE);
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_VERTRIGHT);
-            _indentBuilder.Append(dashes);
-            _indentBuilder.Append(ColorConstants.ANSI_RESET);
-        }
-        else
-        {
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_VERTRIGHT);
-            _indentBuilder.Append(dashes);
-        }
+        _indentBuilder.Append(spaces);
+        _indentBuilder.Append(SharedConstants.BOX_VERTRIGHT);
+        _indentBuilder.Append(dashes);
 
         indentMiddle = _indentBuilder.ToString();
+    }
+
+    /// <summary>
+    /// Sanitizes a file name to avoid issues with NTFS or ReFS.
+    /// </summary>
+    /// <param name="filename">The file name to sanitize.</param>
+    /// <returns>The sanitized file name.</returns>
+    private string SanitizeFileName(string filename)
+    {
+        foreach (char character in Path.GetInvalidFileNameChars())
+        {
+            filename = filename.Replace(character, '-');
+        }
+
+        return filename;
     }
 
     /// <inheritdoc/>
     public void Dispose()
     {
-        _semaphore.Dispose();
+        throw new NotImplementedException();
     }
 }

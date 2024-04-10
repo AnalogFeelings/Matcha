@@ -47,6 +47,11 @@ public sealed class MatchaLogger : IDisposable
     public MatchaLogger(params IMatchaSink<SinkConfig>[] sinks)
     {
         _sinks = sinks;
+
+        foreach (IMatchaSink<SinkConfig> sink in _sinks)
+        {
+            sink.InitializeSink();
+        }
     }
 
     /// <summary>
@@ -81,7 +86,7 @@ public sealed class MatchaLogger : IDisposable
 
         // Check if at least one sink is enabled or usable.
         bool passedTests = false;
-        Task[] taskArray = new Task[_sinks.Length];
+        Task?[] taskArray = new Task[_sinks.Length];
         LogEntry entry = new LogEntry()
         {
             Content = formattedMessage,
@@ -105,7 +110,7 @@ public sealed class MatchaLogger : IDisposable
         if (!passedTests)
             return;
 
-        await Task.WhenAll(taskArray);
+        await Task.WhenAll(taskArray.Where(x => x != null)!);
     }
 
     /// <inheritdoc/>
