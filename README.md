@@ -7,7 +7,7 @@
 [!![GitHub Repo stars](https://img.shields.io/github/stars/analogfeelings/matcha?label=Stargazers&style=flat-square)](https://github.com/AnalogFeelings/Matcha/stargazers)
 [![GitHub](https://img.shields.io/github/license/analogfeelings/matcha?label=License&style=flat-square)](https://github.com/AnalogFeelings/Matcha/blob/neo/LICENSE.txt)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/w/analogfeelings/matcha?label=Commit%20Activity&style=flat-square)](https://github.com/AnalogFeelings/Matcha/graphs/commit-activity)
-![NuGet Downloads](https://img.shields.io/nuget/dt/AnalogFeelings.Matcha?logo=nuget&label=NuGet&color=004880&style=flat-square)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/AnalogFeelings.Matcha?logo=nuget&label=NuGet&color=004880&style=flat-square)](https://www.nuget.org/packages/AnalogFeelings.Matcha/)
 [![Mastodon Follow](https://img.shields.io/mastodon/follow/109309123442839534?domain=https%3A%2F%2Ftech.lgbt%2F&style=flat-square&logo=mastodon&logoColor=white&label=Follow%20Me!&color=6364ff)](https://tech.lgbt/@analog_feelings)
 
 A simple but neat logging library for .NET 7.0 and higher. It includes XML documentation!
