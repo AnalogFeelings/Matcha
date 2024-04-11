@@ -33,7 +33,7 @@ using File = System.IO.File;
 /// <summary>
 /// A simple sink to output logs to a file in the system.
 /// </summary>
-public class FileSink : IMatchaSink<FileSinkConfig>, IDisposable
+public sealed class FileSink : IMatchaSink<FileSinkConfig>, IDisposable
 {
     /// <inheritdoc/>
     public required FileSinkConfig Config { get; init; }

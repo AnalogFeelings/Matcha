@@ -34,7 +34,7 @@ using Debugger = System.Diagnostics.Debugger;
 /// <summary>
 /// A simple sink to output logs to the IDE debug output.
 /// </summary>
-public class DebuggerSink : IMatchaSink<DebuggerSinkConfig>
+public sealed class DebuggerSink : IMatchaSink<DebuggerSinkConfig>
 {
     /// <inheritdoc/>
     public required DebuggerSinkConfig Config { get; init; }
