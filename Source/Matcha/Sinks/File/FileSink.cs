@@ -71,7 +71,7 @@ public sealed class FileSink : IMatchaSink<FileSinkConfig>, IDisposable
 
             _writer = new StreamWriter(File.Open(logFilePath, logFileMode, FileAccess.Write, FileShare.Read));
         }
-        catch (Exception e)
+        catch (Exception)
         {
             // Ignored
         }

@@ -8,7 +8,7 @@
         <Version>2.0.0</Version>
         <Title>Matcha</Title>
         <Authors>Analog Feelings</Authors>
-        <Description>A simple but neat logging library for .NET Standard 2.1, originally developed for usage in Samm-Bot.</Description>
+        <Description>A simple but neat logging library for .NET 7.0, originally developed for usage in Samm-Bot.</Description>
         <Copyright>© Copyright Analog Feelings 2022-2024</Copyright>
         <PackageIcon>matcha.png</PackageIcon>
         <RepositoryUrl>https://github.com/AnalogFeelings/Matcha.git</RepositoryUrl>
