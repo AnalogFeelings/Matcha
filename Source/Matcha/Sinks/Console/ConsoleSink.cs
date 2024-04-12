@@ -24,6 +24,7 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 using AnalogFeelings.Matcha.Enums;
+using AnalogFeelings.Matcha.Extensions;
 using AnalogFeelings.Matcha.Interfaces;
 using AnalogFeelings.Matcha.Models;
 
@@ -65,7 +66,7 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
     /// <inheritdoc/>
     public void InitializeSink()
     {
-        return;
+        // Empty.
     }
 
     /// <inheritdoc/>
@@ -129,7 +130,7 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
 
             logHeaderLength += data.Header.Length + 1;
 
-            string[] splittedContent = entry.Content.Split(SharedConstants.NewlineArray, StringSplitOptions.None);
+            string[] splittedContent = entry.Content.SplitLines();
 
             GenerateIndents(splittedContent.Length, logHeaderLength, out string indentMiddle, out string indentLast);
 

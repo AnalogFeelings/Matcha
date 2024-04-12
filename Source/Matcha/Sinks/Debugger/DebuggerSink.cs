@@ -24,6 +24,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using AnalogFeelings.Matcha.Extensions;
 using AnalogFeelings.Matcha.Interfaces;
 using AnalogFeelings.Matcha.Models;
 
@@ -51,7 +52,7 @@ public sealed class DebuggerSink : IMatchaSink<DebuggerSinkConfig>
     /// <inheritdoc/>
     public void InitializeSink()
     {
-        return;
+        // Empty.
     }
 
     /// <inheritdoc/>
@@ -76,7 +77,7 @@ public sealed class DebuggerSink : IMatchaSink<DebuggerSinkConfig>
             _fullBuilder.Append(SharedConstants.SeverityDictionary[entry.Severity]);
             _fullBuilder.Append(']');
             
-            string[] splittedContent = entry.Content.Split(SharedConstants.NewlineArray, StringSplitOptions.None);
+            string[] splittedContent = entry.Content.SplitLines();
             
             GenerateIndents(splittedContent.Length, _fullBuilder.Length, out string indentMiddle, out string indentLast);
             

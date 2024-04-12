@@ -23,6 +23,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Text;
+using AnalogFeelings.Matcha.Extensions;
 using AnalogFeelings.Matcha.Interfaces;
 using AnalogFeelings.Matcha.Models;
 
@@ -41,7 +42,7 @@ public sealed class FileSink : IMatchaSink<FileSinkConfig>, IDisposable
     /// <summary>
     /// The writer for the output file.
     /// </summary>
-    private StreamWriter? _writer = null;
+    private StreamWriter? _writer;
     
     /// <summary>
     /// Provides a semaphore to prevent race conditions.
@@ -73,7 +74,7 @@ public sealed class FileSink : IMatchaSink<FileSinkConfig>, IDisposable
         }
         catch (Exception)
         {
-            // Ignored
+            // Ignored.
         }
     }
 
@@ -100,7 +101,7 @@ public sealed class FileSink : IMatchaSink<FileSinkConfig>, IDisposable
             _fullBuilder.Append(SharedConstants.SeverityDictionary[entry.Severity]);
             _fullBuilder.Append(']');
             
-            string[] splittedContent = entry.Content.Split(SharedConstants.NewlineArray, StringSplitOptions.None);
+            string[] splittedContent = entry.Content.SplitLines();
             
             GenerateIndents(splittedContent.Length, _fullBuilder.Length, out string indentMiddle, out string indentLast);
             

@@ -21,40 +21,31 @@
 // SOFTWARE.
 #endregion
 
-using AnalogFeelings.Matcha.Enums;
-
-namespace AnalogFeelings.Matcha;
+namespace AnalogFeelings.Matcha.Extensions;
 
 /// <summary>
-/// Contains shared constants used by the built-in sinks.
+/// Contains utility methods for string objects.
 /// </summary>
-internal static class SharedConstants
+internal static class StringExtensions
 {
     /// <summary>
-    /// Box drawing character in an "L" shape.
+    /// Constant array of newline sequences.
     /// </summary>
-    public const char BOX_UPRIGHT = '\u2514';
-    
+    private static readonly string[] _newlineArray = ["\n", "\r\n"];
+
     /// <summary>
-    /// Box drawing character in a sideways "T" shape.
+    /// Splits a string based off newline character sequences.
     /// </summary>
-    public const char BOX_VERTRIGHT = '\u251c';
-    
-    /// <summary>
-    /// Box drawing character in a "-" shape.
-    /// </summary>
-    public const char BOX_HORIZONTAL = '\u2500';
-    
-    /// <summary>
-    /// Dictionary to quickly convert a severity to its string representation.
-    /// </summary>
-    public static readonly Dictionary<LogSeverity, string> SeverityDictionary = new Dictionary<LogSeverity, string>()
+    /// <param name="target">The string to split.</param>
+    /// <returns>A collection containing the splitted lines.</returns>
+    /// <remarks>
+    /// Leading and trailing spaces and newlines are removed.
+    /// </remarks>
+    public static string[] SplitLines(this string target)
     {
-        [LogSeverity.Debug] = "DBG",
-        [LogSeverity.Information] = "INF",
-        [LogSeverity.Success] = "SCS",
-        [LogSeverity.Warning] = "WRN",
-        [LogSeverity.Error] = "ERR",
-        [LogSeverity.Fatal] = "FTL"
-    };
+        string trimmed = target.Trim();
+        string[] splitted = trimmed.Split(_newlineArray, StringSplitOptions.None);
+
+        return splitted.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+    }
 }
