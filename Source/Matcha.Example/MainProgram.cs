@@ -1,10 +1,9 @@
-﻿using AnalogFeelings.Matcha;
-using AnalogFeelings.Matcha.Enums;
+﻿using AnalogFeelings.Matcha.Enums;
 using AnalogFeelings.Matcha.Sinks.Console;
 using AnalogFeelings.Matcha.Sinks.Debugger;
 using AnalogFeelings.Matcha.Sinks.File;
 
-namespace Matcha.Example;
+namespace AnalogFeelings.Matcha.Example;
 
 file static class MainProgram
 {
