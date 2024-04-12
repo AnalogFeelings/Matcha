@@ -1,11 +1,11 @@
 # 🍵 Matcha
 
-![GitHub issues](https://img.shields.io/github/issues/analogfeelings/matcha?label=Issues&style=flat-square)
-![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/analogfeelings/matcha?style=flat-square&label=Pull%20Requests)
-![GitHub Repo stars](https://img.shields.io/github/stars/analogfeelings/matcha?label=Stargazers&style=flat-square)
-![GitHub](https://img.shields.io/github/license/analogfeelings/matcha?label=License&style=flat-square)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/analogfeelings/matcha?label=Commit%20Activity&style=flat-square)
-![Mastodon Follow](https://img.shields.io/mastodon/follow/109309123442839534?domain=https%3A%2F%2Ftech.lgbt%2F&style=flat-square&logo=mastodon&logoColor=white&label=Follow%20Me!&color=6364ff)
+[![GitHub issues](https://img.shields.io/github/issues/analogfeelings/matcha?label=Issues&style=flat-square)](https://github.com/AnalogFeelings/Matcha/issues)
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/analogfeelings/matcha?style=flat-square&label=Pull%20Requests)](https://github.com/AnalogFeelings/Matcha/pulls)
+[![GitHub Repo stars](https://img.shields.io/github/stars/analogfeelings/matcha?label=Stargazers&style=flat-square)](https://github.com/AnalogFeelings/Matcha/stargazers)
+[![GitHub](https://img.shields.io/github/license/analogfeelings/matcha?label=License&style=flat-square)](https://github.com/AnalogFeelings/Matcha/blob/neo/LICENSE.txt)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/w/analogfeelings/matcha?label=Commit%20Activity&style=flat-square)](https://github.com/AnalogFeelings/Matcha/graphs/commit-activity)
+[![Mastodon Follow](https://img.shields.io/mastodon/follow/109309123442839534?domain=https%3A%2F%2Ftech.lgbt%2F&style=flat-square&logo=mastodon&logoColor=white&label=Follow%20Me!&color=6364ff)](https://tech.lgbt/@analog_feelings)
 
 A simple but neat logging library for .NET 7.0 and higher. It includes XML documentation!
 
