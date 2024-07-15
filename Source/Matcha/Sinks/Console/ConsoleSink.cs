@@ -132,7 +132,7 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
 
             string[] splittedContent = entry.Content.SplitLines();
 
-            GenerateIndents(splittedContent.Length, logHeaderLength, out string indentMiddle, out string indentLast);
+            Common.GenerateIndents(splittedContent.Length, logHeaderLength, Config.UseColors, _indentBuilder, out string indentMiddle, out string indentLast);
 
             for (int i = 0; i < splittedContent.Length; i++)
             {
@@ -181,68 +181,6 @@ public sealed class ConsoleSink : IMatchaSink<ConsoleSinkConfig>, IDisposable
 
             _semaphore.Release();
         }
-    }
-
-    /// <summary>
-    /// Generates the indentation strings.
-    /// </summary>
-    /// <param name="lineCount">The amount of lines in the log entry.</param>
-    /// <param name="headerLength">The length of the log header section.</param>
-    /// <param name="indentMiddle">The target string to place the middle indent sequence in.</param>
-    /// <param name="indentLast">The target string to place the last indent sequence in.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void GenerateIndents(int lineCount, int headerLength, out string indentMiddle, out string indentLast)
-    {
-        indentMiddle = indentLast = string.Empty;
-
-        if (lineCount == 1) return;
-
-        int amountOfSpaces = headerLength - 4;
-        int amountOfDashes = headerLength - (headerLength - 3);
-        Span<char> spaces = stackalloc char[amountOfSpaces];
-        Span<char> dashes = stackalloc char[amountOfDashes];
-
-        spaces.Fill(' ');
-        dashes.Fill(SharedConstants.BOX_HORIZONTAL);
-
-        if (Config.UseColors)
-        {
-            _indentBuilder.Append(ColorConstants.WHITE);
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_UPRIGHT);
-            _indentBuilder.Append(dashes);
-            _indentBuilder.Append(ColorConstants.ANSI_RESET);
-        }
-        else
-        {
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_UPRIGHT);
-            _indentBuilder.Append(dashes);
-        }
-
-        indentLast = _indentBuilder.ToString();
-
-        if (lineCount <= 2) return;
-
-        // Only bother initializing middle header if we got more than 2 lines total.
-        _indentBuilder.Clear();
-
-        if (Config.UseColors)
-        {
-            _indentBuilder.Append(ColorConstants.WHITE);
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_VERTRIGHT);
-            _indentBuilder.Append(dashes);
-            _indentBuilder.Append(ColorConstants.ANSI_RESET);
-        }
-        else
-        {
-            _indentBuilder.Append(spaces);
-            _indentBuilder.Append(SharedConstants.BOX_VERTRIGHT);
-            _indentBuilder.Append(dashes);
-        }
-
-        indentMiddle = _indentBuilder.ToString();
     }
 
     /// <inheritdoc/>
