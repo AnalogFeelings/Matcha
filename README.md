@@ -41,6 +41,10 @@ has resources that need to be disposed.
 > Implement a `SemaphoreSlim` for thread safety, and release it inside a `finally` block.
 > This will prevent deadlocks if an error occurs during logging.
 
+> [!TIP]
+> Matcha exposes the method used to generate the newline indentation strings, just use the
+> `Common` class and you'll find it!
+
 ## :inbox_tray: Downloads
 You can find this package in [NuGet](https://www.nuget.org/packages/MatchaLogger/).
 

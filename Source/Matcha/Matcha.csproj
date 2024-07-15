@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>AnalogFeelings.Matcha</PackageId>
-        <Version>2.0.1</Version>
+        <Version>2.1.0</Version>
         <Title>Matcha</Title>
         <Authors>Analog Feelings</Authors>
         <Description>A simple but neat logging library for .NET 7.0, originally developed for usage in Samm-Bot.</Description>
@@ -24,7 +24,8 @@
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <RootNamespace>AnalogFeelings.Matcha</RootNamespace>
         <AssemblyName>AnalogFeelings.Matcha</AssemblyName>
-        <PackageReleaseNotes>Improve line splitting and fix "ghost newline" bug (#2).</PackageReleaseNotes>
+        <PackageReleaseNotes>Fix NotImplementedException being thrown when FileSink is disposed.
+Move GenerateIndents internal function to a public Common class.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>
