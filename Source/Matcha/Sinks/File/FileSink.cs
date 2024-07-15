@@ -202,6 +202,6 @@ public sealed class FileSink : IMatchaSink<FileSinkConfig>, IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        throw new NotImplementedException();
+        _writer?.Dispose();
     }
 }
