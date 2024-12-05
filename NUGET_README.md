@@ -9,10 +9,12 @@
 
 A simple but neat logging library for .NET 7.0 and higher. It includes XML documentation!
 
-The library is built with extensibility in mind, by adding a "sink" system where each `Log` call is sent to all sinks for processing instead of centralizing
+The library is built with extensibility in mind, by adding a "sink" system where each `Log` call is sent to all sinks
+for processing instead of centralizing
 everything into the main logger class.
 
 It comes with 3 default logging sinks:
+
 - Console
 - Debugger
 - File
@@ -21,6 +23,7 @@ It comes with 3 default logging sinks:
 All of the built-in sinks are thread-safe, but the library doesn't enforce this. Use third party sinks with caution!
 
 ## 🤔 Usage
+
 Create the needed sinks and their configurations and pass them to the constructor to `MatchaLogger`.  
 Adding or removing sinks at runtime is not allowed, but this may change in a future release.
 
@@ -28,6 +31,7 @@ You may change a sink's configuration at runtime by keeping a reference to it.
 Matcha will automatically dispose any sinks that implement `IDisposable` when Matcha itself is disposed.
 
 ## 🖌️ Custom Sinks
+
 Creating a custom sink requires you to implement `IMatchaSink<out T>`, where `T` may be any
 class, record or struct that inherits from `SinkConfig`.
 
@@ -43,13 +47,15 @@ Matcha exposes the method used to generate the newline indentation strings, just
 `Common` class and you'll find it!
 
 ## 📥 Downloads
+
 You can find this package in [NuGet](https://www.nuget.org/packages/MatchaLogger/).
 
 Alternatively, you could download it from the [releases](https://github.com/AnalogFeelings/Matcha/releases/latest) page.
 
 # ⚖️ License
+
 Licensed under the MIT License. You can read it [here](LICENSE.txt).
- 
+
 ```
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

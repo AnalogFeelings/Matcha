@@ -25,7 +25,8 @@
         <RootNamespace>AnalogFeelings.Matcha</RootNamespace>
         <AssemblyName>AnalogFeelings.Matcha</AssemblyName>
         <PackageReleaseNotes>Fix NotImplementedException being thrown when FileSink is disposed.
-Move GenerateIndents internal function to a public Common class.</PackageReleaseNotes>
+            Move GenerateIndents internal function to a public Common class.
+        </PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

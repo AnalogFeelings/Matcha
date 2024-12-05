@@ -1,6 +1,6 @@
 ﻿#region License Information (MIT)
 // Matcha - A simple but neat logging library for .NET.
-// Copyright (C) 2022-2024 Analog Feelings
+// Copyright (C) 2022 Analog Feelings
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
